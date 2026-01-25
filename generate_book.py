@@ -38,7 +38,7 @@ def main():
             "uv", "run", "python", "main.py",
             *shape_args,
             "-o", output_file,
-            "--title", "Number Crossword",
+            "--title", "Number Crosswords",
             "--subtitle", f"Level {level}",
             "--seed", str(seed),
             "--prev-link", prev_link,
