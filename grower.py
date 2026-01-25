@@ -570,6 +570,94 @@ def generate_figure_eight(max_attempts: int = 1000) -> GrowingPuzzle | None:
     return None
 
 
+def generate_figure_three(max_attempts: int = 1000) -> GrowingPuzzle | None:
+    """Generate a figure-3 shaped puzzle (like 8 but no left side).
+
+    Shape:
+        XXXXX
+            X
+            X
+            X
+        XXXXX
+            X
+            X
+            X
+        XXXXX
+
+    The figure-3 has:
+    - 3 horizontal 5-cell equations (top, middle, bottom)
+    - 1 vertical 9-cell equation (right side)
+
+    Returns a GrowingPuzzle with the figure-3 filled in, or None if failed.
+    """
+    from collections import defaultdict
+
+    # Pre-generate equation pools
+    nine_cells = []
+    five_cells = []
+
+    for i in range(500):
+        eq9 = generate_interesting_equation(9)
+        if eq9:
+            # Store (equation, pos0, pos4, pos8)
+            nine_cells.append((eq9, eq9[0], eq9[4], eq9[8]))
+        if len(nine_cells) >= 200:
+            break
+
+    for i in range(500):
+        eq5 = generate_interesting_equation(5)
+        if eq5:
+            # Store (equation, end digit)
+            five_cells.append((eq5, eq5[4]))
+        if len(five_cells) >= 200:
+            break
+
+    if len(nine_cells) < 10 or len(five_cells) < 10:
+        return None
+
+    # Build lookup for 5-cell by ending digit
+    five_by_end = defaultdict(list)
+    for eq, end in five_cells:
+        five_by_end[end].append(eq)
+
+    # Shuffle for randomness
+    random.shuffle(nine_cells)
+
+    # Search: find vertical + 3 compatible horizontals
+    for right_eq, A, B, C in nine_cells:
+        top_options = five_by_end.get(A, [])
+        mid_options = five_by_end.get(B, [])
+        bot_options = five_by_end.get(C, [])
+
+        if top_options and mid_options and bot_options:
+            top = random.choice(top_options)
+            mid = random.choice(mid_options)
+            bot = random.choice(bot_options)
+
+            # Build the puzzle
+            puzzle = GrowingPuzzle()
+
+            # Top horizontal (row 0, cols 0-4)
+            for col, char in enumerate(top):
+                puzzle.set_cell(0, col, char)
+
+            # Middle horizontal (row 4, cols 0-4)
+            for col, char in enumerate(mid):
+                puzzle.set_cell(4, col, char)
+
+            # Bottom horizontal (row 8, cols 0-4)
+            for col, char in enumerate(bot):
+                puzzle.set_cell(8, col, char)
+
+            # Right vertical (col 4, rows 0-8)
+            for row, char in enumerate(right_eq):
+                puzzle.set_cell(row, 4, char)
+
+            return puzzle.normalize()
+
+    return None
+
+
 def generate_figure_four(max_attempts: int = 1000) -> GrowingPuzzle | None:
     """Generate a figure-4 shaped puzzle.
 

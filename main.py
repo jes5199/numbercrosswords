@@ -13,7 +13,7 @@ from shape import Shape, get_digit_shape, get_large_digit_shape, get_preset_shap
 from generator import generate_solved_puzzle
 from creator import create_puzzle, create_puzzle_with_difficulty
 from html_output import save_puzzle_html
-from grower import grow_puzzle, grown_puzzle_to_shape_and_solution, generate_figure_eight, generate_figure_four
+from grower import grow_puzzle, grown_puzzle_to_shape_and_solution, generate_figure_eight, generate_figure_four, generate_figure_three
 
 
 def main():
@@ -66,6 +66,11 @@ def main():
         "--figure-four",
         action="store_true",
         help="Generate a figure-4 shaped puzzle",
+    )
+    shape_group.add_argument(
+        "--figure-three",
+        action="store_true",
+        help="Generate a figure-3 shaped puzzle (like 8 but no left side)",
     )
 
     # Equation length (for --grow)
@@ -149,6 +154,17 @@ def main():
 
         shape, solved = grown_puzzle_to_shape_and_solution(grown)
         print("Generated figure-4 with 3 equations!")
+
+    elif args.figure_three:
+        print("Generating figure-3 puzzle...")
+        grown = generate_figure_three(max_attempts=args.max_attempts)
+
+        if grown is None:
+            print("Failed to generate figure-3 puzzle.")
+            sys.exit(1)
+
+        shape, solved = grown_puzzle_to_shape_and_solution(grown)
+        print("Generated figure-3 with 4 equations!")
 
     elif args.grow:
         # Parse length argument (e.g., "5", "7", "5-9")
