@@ -481,3 +481,90 @@ def grown_puzzle_to_shape_and_solution(puzzle: GrowingPuzzle):
     solved = PuzzleClass(shape=shape, cells=dict(p.cells))
 
     return shape, solved
+
+
+def generate_figure_eight(max_attempts: int = 1000) -> GrowingPuzzle | None:
+    """Generate a figure-8 shaped puzzle (two stacked boxes sharing middle row).
+
+    The figure-8 has:
+    - 3 horizontal 5-cell equations (top, middle, bottom)
+    - 2 vertical 9-cell equations (left, right sides)
+
+    Returns a GrowingPuzzle with the figure-8 filled in, or None if failed.
+    """
+    from collections import defaultdict
+
+    # Pre-generate equation pools (use fixed seeds for reproducibility, shuffle later)
+    nine_cells = []
+    five_cells = []
+
+    # Generate 9-cell equations
+    for i in range(500):
+        eq9 = generate_interesting_equation(9)
+        if eq9:
+            nine_cells.append((eq9, eq9[0], eq9[4], eq9[8]))
+        if len(nine_cells) >= 200:
+            break
+
+    # Generate 5-cell equations
+    for i in range(500):
+        eq5 = generate_interesting_equation(5)
+        if eq5:
+            five_cells.append((eq5, eq5[0], eq5[4]))
+        if len(five_cells) >= 200:
+            break
+
+    if len(nine_cells) < 10 or len(five_cells) < 10:
+        return None
+
+    # Build lookup for 5-cell by (start, end)
+    five_by_pair = defaultdict(list)
+    for eq, start, end in five_cells:
+        five_by_pair[(start, end)].append(eq)
+
+    # Shuffle for randomness
+    random.shuffle(nine_cells)
+
+    # Search for valid combinations
+    for left_eq, A, C, E in nine_cells:
+        for right_eq, B, D, F in nine_cells:
+            if left_eq == right_eq:
+                continue
+
+            top_options = five_by_pair.get((A, B), [])
+            mid_options = five_by_pair.get((C, D), [])
+            bot_options = five_by_pair.get((E, F), [])
+
+            if top_options and mid_options and bot_options:
+                # Pick random equations from options
+                top = random.choice(top_options)
+                mid = random.choice(mid_options)
+                bot = random.choice(bot_options)
+
+                # Build the puzzle
+                puzzle = GrowingPuzzle()
+
+                # Place cells - figure-8 is 5 wide, 9 tall
+                # Top horizontal (row 0)
+                for col, char in enumerate(top):
+                    puzzle.set_cell(0, col, char)
+
+                # Middle horizontal (row 4)
+                for col, char in enumerate(mid):
+                    puzzle.set_cell(4, col, char)
+
+                # Bottom horizontal (row 8)
+                for col, char in enumerate(bot):
+                    puzzle.set_cell(8, col, char)
+
+                # Left vertical (col 0, rows 0-8)
+                for row, char in enumerate(left_eq):
+                    puzzle.set_cell(row, 0, char)
+
+                # Right vertical (col 4, rows 0-8)
+                for row, char in enumerate(right_eq):
+                    puzzle.set_cell(row, 4, char)
+
+                return puzzle.normalize()
+
+    return None
