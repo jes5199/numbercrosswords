@@ -169,6 +169,19 @@ def generate_html(
         .key:active {{
             background: #dee2e6;
         }}
+
+        /* Hide interactive elements when printing */
+        @media print {{
+            .keyboard, .buttons, .info {{
+                display: none !important;
+            }}
+            body {{
+                background: white;
+            }}
+            .cell.input {{
+                background: white;
+            }}
+        }}
     </style>
 </head>
 <body>
