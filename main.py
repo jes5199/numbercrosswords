@@ -13,7 +13,7 @@ from shape import Shape, get_digit_shape, get_large_digit_shape, get_preset_shap
 from generator import generate_solved_puzzle
 from creator import create_puzzle, create_puzzle_with_difficulty
 from html_output import save_puzzle_html
-from grower import grow_puzzle, grown_puzzle_to_shape_and_solution, generate_figure_eight
+from grower import grow_puzzle, grown_puzzle_to_shape_and_solution, generate_figure_eight, generate_figure_four
 
 
 def main():
@@ -61,6 +61,11 @@ def main():
         "--figure-eight",
         action="store_true",
         help="Generate a figure-8 shaped puzzle (two 5x5 boxes stacked)",
+    )
+    shape_group.add_argument(
+        "--figure-four",
+        action="store_true",
+        help="Generate a figure-4 shaped puzzle",
     )
 
     # Equation length (for --grow)
@@ -133,6 +138,17 @@ def main():
 
         shape, solved = grown_puzzle_to_shape_and_solution(grown)
         print("Generated figure-8 with 5 equations!")
+
+    elif args.figure_four:
+        print("Generating figure-4 puzzle...")
+        grown = generate_figure_four(max_attempts=args.max_attempts)
+
+        if grown is None:
+            print("Failed to generate figure-4 puzzle.")
+            sys.exit(1)
+
+        shape, solved = grown_puzzle_to_shape_and_solution(grown)
+        print("Generated figure-4 with 3 equations!")
 
     elif args.grow:
         # Parse length argument (e.g., "5", "7", "5-9")

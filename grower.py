@@ -568,3 +568,99 @@ def generate_figure_eight(max_attempts: int = 1000) -> GrowingPuzzle | None:
                 return puzzle.normalize()
 
     return None
+
+
+def generate_figure_four(max_attempts: int = 1000) -> GrowingPuzzle | None:
+    """Generate a figure-4 shaped puzzle.
+
+    Shape:
+        X   X
+        X   X
+        X   X
+        X   X
+        XXXXX
+            X
+            X
+            X
+            X
+
+    The figure-4 has:
+    - 1 horizontal 5-cell equation (the crossbar)
+    - 1 vertical 5-cell equation (left side, rows 0-4)
+    - 1 vertical 9-cell equation (right side, rows 0-8)
+
+    Returns a GrowingPuzzle with the figure-4 filled in, or None if failed.
+    """
+    from collections import defaultdict
+
+    # Pre-generate equation pools
+    nine_cells = []  # For right vertical
+    five_cells = []  # For left vertical and horizontal
+
+    for i in range(500):
+        eq9 = generate_interesting_equation(9)
+        if eq9:
+            # Store (equation, position 4 digit) - where horizontal crosses
+            nine_cells.append((eq9, eq9[4]))
+        if len(nine_cells) >= 200:
+            break
+
+    for i in range(500):
+        eq5 = generate_interesting_equation(5)
+        if eq5:
+            # Store (equation, start, end)
+            five_cells.append((eq5, eq5[0], eq5[4]))
+        if len(five_cells) >= 200:
+            break
+
+    if len(nine_cells) < 10 or len(five_cells) < 10:
+        return None
+
+    # Build lookups
+    # Left vertical: need equations where position 4 (bottom) = some digit A
+    # Horizontal: need equations where position 0 = A, position 4 = B
+    # Right vertical: need equations where position 4 = B
+
+    five_by_end = defaultdict(list)  # For left vertical (keyed by last digit)
+    five_by_start_end = defaultdict(list)  # For horizontal
+    nine_by_pos4 = defaultdict(list)  # For right vertical
+
+    for eq, start, end in five_cells:
+        five_by_end[end].append(eq)
+        five_by_start_end[(start, end)].append(eq)
+
+    for eq, pos4 in nine_cells:
+        nine_by_pos4[pos4].append(eq)
+
+    # Shuffle for randomness
+    random.shuffle(five_cells)
+
+    # Search: for each left vertical, find compatible horizontal and right vertical
+    for left_eq, _, A in five_cells:  # A is the bottom of left vertical
+        for horiz_eq, horiz_start, B in five_cells:
+            if horiz_start != A:
+                continue
+            # horiz_eq starts with A, ends with B
+            # Need right vertical with position 4 = B
+            right_options = nine_by_pos4.get(B, [])
+            if right_options:
+                right_eq = random.choice(right_options)
+
+                # Build the puzzle
+                puzzle = GrowingPuzzle()
+
+                # Left vertical (col 0, rows 0-4)
+                for row, char in enumerate(left_eq):
+                    puzzle.set_cell(row, 0, char)
+
+                # Horizontal (row 4, cols 0-4)
+                for col, char in enumerate(horiz_eq):
+                    puzzle.set_cell(4, col, char)
+
+                # Right vertical (col 4, rows 0-8)
+                for row, char in enumerate(right_eq):
+                    puzzle.set_cell(row, 4, char)
+
+                return puzzle.normalize()
+
+    return None
