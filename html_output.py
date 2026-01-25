@@ -64,14 +64,10 @@ def generate_html(
         }}
         .grid {{
             display: inline-block;
-            background: #333;
-            padding: 2px;
-            gap: 2px;
-            border-radius: 4px;
+            background: white;
         }}
         .row {{
             display: flex;
-            gap: 2px;
         }}
         .cell {{
             width: 48px;
@@ -83,18 +79,19 @@ def generate_html(
             font-weight: bold;
         }}
         .cell.inactive {{
-            background: #e0e0e0;
-            width: 48px;
-            height: 48px;
+            background: white;
         }}
         .cell.clue {{
-            background: #e8e8e8;
+            background: white;
             color: #333;
-            border-radius: 2px;
+            border: 2px solid #333;
         }}
         .cell.input {{
+            background: #d0d0d0;
+            border: 2px solid #333;
+        }}
+        .cell.input.filled {{
             background: white;
-            border-radius: 2px;
         }}
         .cell input {{
             width: 100%;
@@ -106,14 +103,11 @@ def generate_html(
             background: transparent;
             outline: none;
         }}
-        .cell input:focus {{
-            background: #fff3cd;
+        .cell.correct {{
+            background: #d4edda !important;
         }}
-        .cell.correct input {{
-            background: #d4edda;
-        }}
-        .cell.incorrect input {{
-            background: #f8d7da;
+        .cell.incorrect {{
+            background: #f8d7da !important;
         }}
         .buttons {{
             display: flex;
@@ -274,6 +268,13 @@ def generate_html(
 
             input.value = value;
             input.parentElement.classList.remove('correct', 'incorrect');
+
+            // Toggle filled class based on whether input has value
+            if (value) {{
+                input.parentElement.classList.add('filled');
+            }} else {{
+                input.parentElement.classList.remove('filled');
+            }}
         }}
 
         function handleKeydown(e) {{
