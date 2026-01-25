@@ -108,6 +108,12 @@ def main():
         help="Puzzle title",
     )
     parser.add_argument(
+        "--subtitle",
+        type=str,
+        default="",
+        help="Puzzle subtitle (e.g., 'Level 1')",
+    )
+    parser.add_argument(
         "--no-solution-button",
         action="store_true",
         help="Don't include solution button in output",
@@ -260,6 +266,7 @@ def main():
         result,
         str(output_path),
         title=args.title,
+        subtitle=args.subtitle,
         show_solution_button=not args.no_solution_button,
     )
     print(f"Saved puzzle to {output_path}")

@@ -7,6 +7,7 @@ from creator import PuzzleCreationResult
 def generate_html(
     result: PuzzleCreationResult,
     title: str = "Number Crossword",
+    subtitle: str = "",
     show_solution_button: bool = True,
 ) -> str:
     """Generate an interactive HTML page for a puzzle."""
@@ -55,6 +56,14 @@ def generate_html(
         h1 {{
             text-align: center;
             color: #333;
+            margin-bottom: 5px;
+        }}
+        .subtitle {{
+            text-align: center;
+            color: #666;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
         }}
         .puzzle-container {{
             display: flex;
@@ -204,6 +213,7 @@ def generate_html(
 </head>
 <body>
     <h1>{title}</h1>
+    {f'<p class="subtitle">{subtitle}</p>' if subtitle else ''}
 
     <div class="puzzle-container">
         <div class="grid" id="grid"></div>
@@ -428,9 +438,10 @@ def save_puzzle_html(
     result: PuzzleCreationResult,
     path: str,
     title: str = "Number Crossword",
+    subtitle: str = "",
     show_solution_button: bool = True,
 ) -> None:
     """Save a puzzle as an HTML file."""
-    html = generate_html(result, title, show_solution_button)
+    html = generate_html(result, title, subtitle, show_solution_button)
     with open(path, "w") as f:
         f.write(html)
