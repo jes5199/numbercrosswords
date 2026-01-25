@@ -118,6 +118,27 @@
             color: #666;
             font-size: 14px;
         }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+        .nav a {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .nav a:hover {
+            background: #545b62;
+        }
+        .nav .disabled {
+            visibility: hidden;
+        }
         .keyboard {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -143,7 +164,7 @@
 
         /* Hide interactive elements when printing */
         @media print {
-            .keyboard, .buttons, .info {
+            .keyboard, .buttons, .info, .nav {
                 display: none !important;
             }
             body {
@@ -191,6 +212,11 @@
         <div class="info">
             <p>Fill in the blanks so each row and column forms a valid equation.</p>
             <p>Equations are evaluated left-to-right (no order of operations).</p>
+        </div>
+
+        <div class="nav">
+            <a href="level3.html" class="">Previous</a>
+            <a href="level5.html" class="">Next</a>
         </div>
     </div>
 

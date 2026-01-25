@@ -9,6 +9,8 @@ def generate_html(
     title: str = "Number Crossword",
     subtitle: str = "",
     show_solution_button: bool = True,
+    prev_link: str = "",
+    next_link: str = "",
 ) -> str:
     """Generate an interactive HTML page for a puzzle."""
     puzzle = result.puzzle
@@ -156,6 +158,27 @@ def generate_html(
             color: #666;
             font-size: 14px;
         }}
+        .nav {{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }}
+        .nav a {{
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }}
+        .nav a:hover {{
+            background: #545b62;
+        }}
+        .nav .disabled {{
+            visibility: hidden;
+        }}
         .keyboard {{
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -181,7 +204,7 @@ def generate_html(
 
         /* Hide interactive elements when printing */
         @media print {{
-            .keyboard, .buttons, .info {{
+            .keyboard, .buttons, .info, .nav {{
                 display: none !important;
             }}
             body {{
@@ -229,6 +252,11 @@ def generate_html(
         <div class="info">
             <p>Fill in the blanks so each row and column forms a valid equation.</p>
             <p>Equations are evaluated left-to-right (no order of operations).</p>
+        </div>
+
+        <div class="nav">
+            <a href="{prev_link}" class="{'disabled' if not prev_link else ''}">Previous</a>
+            <a href="{next_link}" class="{'disabled' if not next_link else ''}">Next</a>
         </div>
     </div>
 
@@ -440,8 +468,10 @@ def save_puzzle_html(
     title: str = "Number Crossword",
     subtitle: str = "",
     show_solution_button: bool = True,
+    prev_link: str = "",
+    next_link: str = "",
 ) -> None:
     """Save a puzzle as an HTML file."""
-    html = generate_html(result, title, subtitle, show_solution_button)
+    html = generate_html(result, title, subtitle, show_solution_button, prev_link, next_link)
     with open(path, "w") as f:
         f.write(html)

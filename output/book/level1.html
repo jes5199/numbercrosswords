@@ -118,6 +118,27 @@
             color: #666;
             font-size: 14px;
         }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+        .nav a {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .nav a:hover {
+            background: #545b62;
+        }
+        .nav .disabled {
+            visibility: hidden;
+        }
         .keyboard {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -143,7 +164,7 @@
 
         /* Hide interactive elements when printing */
         @media print {
-            .keyboard, .buttons, .info {
+            .keyboard, .buttons, .info, .nav {
                 display: none !important;
             }
             body {
@@ -192,10 +213,15 @@
             <p>Fill in the blanks so each row and column forms a valid equation.</p>
             <p>Equations are evaluated left-to-right (no order of operations).</p>
         </div>
+
+        <div class="nav">
+            <a href="index.html" class="">Previous</a>
+            <a href="level2.html" class="">Next</a>
+        </div>
     </div>
 
     <script>
-        const gridData = [[{"active": true, "clue": null, "answer": "5"}], [{"active": true, "clue": "=", "answer": "="}], [{"active": true, "clue": "9", "answer": "9"}], [{"active": true, "clue": "-", "answer": "-"}], [{"active": true, "clue": "4", "answer": "4"}]];
+        const gridData = [[{"active": true, "clue": null, "answer": "7"}], [{"active": true, "clue": "\u00f7", "answer": "\u00f7"}], [{"active": true, "clue": "7", "answer": "7"}], [{"active": true, "clue": "=", "answer": "="}], [{"active": true, "clue": "1", "answer": "1"}]];
         const validChars = ['0','1','2','3','4','5','6','7','8','9'];  // Only digits (operators always visible)
         let focusedInput = null;
 

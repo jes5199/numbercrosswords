@@ -1,9 +1,0 @@
-# Canonical puzzle book seeds
-# Run: uv run python main.py [shape] -o output/book/levelN.html --title "Number Crossword" --subtitle "Level N" --seed SEED
-
-Level 1: --large-digit 1, seed 5001
-Level 2: --large-digit 7, seed 2002
-Level 3: --figure-four, seed 1003
-Level 4: --figure-three, seed 4004
-Level 5: --figure-zero, seed 1005
-Level 6: --figure-eight, seed 42

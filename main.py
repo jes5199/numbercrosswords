@@ -118,6 +118,18 @@ def main():
         action="store_true",
         help="Don't include solution button in output",
     )
+    parser.add_argument(
+        "--prev-link",
+        type=str,
+        default="",
+        help="URL for previous puzzle link",
+    )
+    parser.add_argument(
+        "--next-link",
+        type=str,
+        default="",
+        help="URL for next puzzle link",
+    )
 
     # Generation options
     parser.add_argument(
@@ -268,6 +280,8 @@ def main():
         title=args.title,
         subtitle=args.subtitle,
         show_solution_button=not args.no_solution_button,
+        prev_link=args.prev_link,
+        next_link=args.next_link,
     )
     print(f"Saved puzzle to {output_path}")
 
