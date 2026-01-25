@@ -748,6 +748,107 @@ def generate_figure_three(max_attempts: int = 1000) -> GrowingPuzzle | None:
     return None
 
 
+def generate_figure_two(max_attempts: int = 1000) -> GrowingPuzzle | None:
+    """Generate a figure-2 shaped puzzle.
+
+    Shape:
+        XXXXX
+            X
+            X
+            X
+        XXXXX
+        X
+        X
+        X
+        XXXXX
+
+    The figure-2 has:
+    - 3 horizontal 5-cell equations (top, middle, bottom)
+    - 1 vertical 5-cell equation on right (rows 0-4, col 4)
+    - 1 vertical 5-cell equation on left (rows 4-8, col 0)
+
+    Returns a GrowingPuzzle with the figure-2 filled in, or None if failed.
+    """
+    from collections import defaultdict
+
+    # Pre-generate 5-cell equation pool
+    five_cells = []
+
+    for i in range(500):
+        eq5 = generate_interesting_equation(5)
+        if eq5:
+            # Store (equation, start, end)
+            five_cells.append((eq5, eq5[0], eq5[4]))
+        if len(five_cells) >= 200:
+            break
+
+    if len(five_cells) < 10:
+        return None
+
+    # Build lookups
+    # By (start, end) for horizontals that need both endpoints to match
+    five_by_pair = defaultdict(list)
+    # By end digit (for top horizontal)
+    five_by_end = defaultdict(list)
+    # By start digit (for bottom horizontal)
+    five_by_start = defaultdict(list)
+
+    for eq, start, end in five_cells:
+        five_by_pair[(start, end)].append(eq)
+        five_by_end[end].append(eq)
+        five_by_start[start].append(eq)
+
+    # Shuffle for randomness
+    random.shuffle(five_cells)
+
+    # Search strategy:
+    # - right_vert connects top (at pos 4) and middle (at pos 4)
+    # - left_vert connects middle (at pos 0) and bottom (at pos 0)
+    # - right_vert[0] = top[4], right_vert[4] = mid[4]
+    # - left_vert[0] = mid[0], left_vert[4] = bot[0]
+
+    for right_eq, A, B in five_cells:  # A=right_vert[0], B=right_vert[4]
+        for left_eq, C, D in five_cells:  # C=left_vert[0], D=left_vert[4]
+            # top horizontal ends with A (top[4] = A)
+            top_options = five_by_end.get(A, [])
+            # middle horizontal: starts with C, ends with B
+            mid_options = five_by_pair.get((C, B), [])
+            # bottom horizontal starts with D (bot[0] = D)
+            bot_options = five_by_start.get(D, [])
+
+            if top_options and mid_options and bot_options:
+                top = random.choice(top_options)
+                mid = random.choice(mid_options)
+                bot = random.choice(bot_options)
+
+                # Build the puzzle
+                puzzle = GrowingPuzzle()
+
+                # Top horizontal (row 0, cols 0-4)
+                for col, char in enumerate(top):
+                    puzzle.set_cell(0, col, char)
+
+                # Middle horizontal (row 4, cols 0-4)
+                for col, char in enumerate(mid):
+                    puzzle.set_cell(4, col, char)
+
+                # Bottom horizontal (row 8, cols 0-4)
+                for col, char in enumerate(bot):
+                    puzzle.set_cell(8, col, char)
+
+                # Right vertical (col 4, rows 0-4)
+                for row, char in enumerate(right_eq):
+                    puzzle.set_cell(row, 4, char)
+
+                # Left vertical (col 0, rows 4-8)
+                for row, char in enumerate(left_eq):
+                    puzzle.set_cell(row + 4, 0, char)
+
+                return puzzle.normalize()
+
+    return None
+
+
 def generate_figure_four(max_attempts: int = 1000) -> GrowingPuzzle | None:
     """Generate a figure-4 shaped puzzle.
 

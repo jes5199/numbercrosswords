@@ -12,6 +12,7 @@ LEVELS = [
     (4, ["--figure-three"], 4004),
     (5, ["--figure-zero"], 1005),
     (6, ["--figure-eight"], 42),
+    (7, ["--figure-two"], 2222),
 ]
 
 

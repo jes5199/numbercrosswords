@@ -141,7 +141,7 @@ def generate_solved_puzzle(
             )
             candidates &= set(valid_for_run)
 
-        candidates = list(candidates)
+        candidates = sorted(candidates)  # Sort for deterministic order before shuffle
         if randomize:
             random.shuffle(candidates)
 
