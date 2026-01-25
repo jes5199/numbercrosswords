@@ -9,7 +9,7 @@ import random
 import sys
 from pathlib import Path
 
-from shape import Shape, get_digit_shape, DIGIT_SHAPES
+from shape import Shape, get_digit_shape, get_preset_shape, DIGIT_SHAPES, PRESET_SHAPES
 from generator import generate_solved_puzzle
 from creator import create_puzzle, create_puzzle_with_difficulty
 from html_output import save_puzzle_html
@@ -37,6 +37,12 @@ def main():
         "--cross",
         action="store_true",
         help="Use a simple cross shape",
+    )
+    shape_group.add_argument(
+        "--preset",
+        type=str,
+        choices=list(PRESET_SHAPES.keys()),
+        help="Use a preset shape",
     )
 
     # Difficulty
@@ -97,25 +103,16 @@ def main():
     elif args.digit is not None:
         print(f"Using digit {args.digit} shape...")
         shape = get_digit_shape(args.digit)
+    elif args.preset:
+        print(f"Using preset shape: {args.preset}...")
+        shape = get_preset_shape(args.preset)
     elif args.cross:
         print("Using cross shape...")
-        shape = Shape.from_string("""
-    X
-    X
-XXXXXXX
-    X
-    X
-""")
+        shape = get_preset_shape("cross-small")
     else:
         # Default: simple cross
         print("Using default cross shape...")
-        shape = Shape.from_string("""
-    X
-    X
-XXXXXXX
-    X
-    X
-""")
+        shape = get_preset_shape("cross-small")
 
     # Show shape info
     runs = shape.get_all_runs()

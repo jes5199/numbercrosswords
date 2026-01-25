@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from puzzle import Puzzle
 from solver import has_unique_solution
+from equation import DIGIT_CHARS
 
 
 @dataclass
@@ -45,8 +46,14 @@ def create_puzzle(
     if min_clues is None:
         min_clues = max(3, total_cells // 3)
 
+    # Only consider removing digit cells (keep operators and equals visible)
+    digit_cells = [
+        (r, c) for r, c in cells
+        if puzzle.get_cell(r, c) in DIGIT_CHARS
+    ]
+
     # Get cells in removal order
-    removal_order = list(cells)
+    removal_order = list(digit_cells)
     if randomize:
         random.shuffle(removal_order)
 

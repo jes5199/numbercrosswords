@@ -192,3 +192,73 @@ def get_digit_shape(digit: int) -> Shape:
     if digit not in DIGIT_SHAPES:
         raise ValueError(f"No shape defined for digit {digit}")
     return Shape.from_string(DIGIT_SHAPES[digit])
+
+
+# Predefined puzzle shapes
+# Design principle: minimize intersections, keep equations 5-7 cells
+PRESET_SHAPES = {
+    "cross-small": """
+  X
+  X
+XXXXX
+  X
+  X
+""",
+    "cross-medium": """
+   X
+   X
+   X
+XXXXXXX
+   X
+   X
+   X
+""",
+    "cross-large": """
+    X
+    X
+    X
+    X
+XXXXXXXXX
+    X
+    X
+    X
+    X
+""",
+    "stairs": """
+XXXXX
+    X
+    XXXXX
+        X
+        XXXXX
+""",
+    "stairs-long": """
+XXXXX
+    X
+    XXXXX
+        X
+        XXXXX
+            X
+            XXXXX
+""",
+    "ladder": """
+  X
+  X
+XXXXX
+  X
+  X
+XXXXX
+  X
+  X
+XXXXX
+  X
+  X
+""",
+}
+
+
+def get_preset_shape(name: str) -> Shape:
+    """Get a preset shape by name."""
+    if name not in PRESET_SHAPES:
+        available = ", ".join(PRESET_SHAPES.keys())
+        raise ValueError(f"Unknown preset shape '{name}'. Available: {available}")
+    return Shape.from_string(PRESET_SHAPES[name])
