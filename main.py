@@ -13,6 +13,7 @@ from shape import Shape, get_digit_shape, get_preset_shape, DIGIT_SHAPES, PRESET
 from generator import generate_solved_puzzle
 from creator import create_puzzle, create_puzzle_with_difficulty
 from html_output import save_puzzle_html
+from grower import grow_puzzle, grown_puzzle_to_shape_and_solution
 
 
 def main():
@@ -43,6 +44,12 @@ def main():
         type=str,
         choices=list(PRESET_SHAPES.keys()),
         help="Use a preset shape",
+    )
+    shape_group.add_argument(
+        "--grow",
+        type=int,
+        metavar="N",
+        help="Grow a puzzle with N equations (guarantees interesting math)",
     )
 
     # Difficulty
@@ -96,38 +103,50 @@ def main():
     if args.seed is not None:
         random.seed(args.seed)
 
-    # Load or create shape
-    if args.shape_file:
-        print(f"Loading shape from {args.shape_file}...")
-        shape = Shape.from_file(args.shape_file)
-    elif args.digit is not None:
-        print(f"Using digit {args.digit} shape...")
-        shape = get_digit_shape(args.digit)
-    elif args.preset:
-        print(f"Using preset shape: {args.preset}...")
-        shape = get_preset_shape(args.preset)
-    elif args.cross:
-        print("Using cross shape...")
-        shape = get_preset_shape("cross-small")
+    # Load or create shape, or grow puzzle
+    if args.grow:
+        print(f"Growing puzzle with {args.grow} equations...")
+        grown = grow_puzzle(num_equations=args.grow, equation_length=5, max_attempts=args.max_attempts)
+
+        if grown is None:
+            print("Failed to grow puzzle. Try fewer equations or increase --max-attempts.")
+            sys.exit(1)
+
+        shape, solved = grown_puzzle_to_shape_and_solution(grown)
+        print(f"Grown {args.grow} equations with real math!")
+
     else:
-        # Default: simple cross
-        print("Using default cross shape...")
-        shape = get_preset_shape("cross-small")
+        if args.shape_file:
+            print(f"Loading shape from {args.shape_file}...")
+            shape = Shape.from_file(args.shape_file)
+        elif args.digit is not None:
+            print(f"Using digit {args.digit} shape...")
+            shape = get_digit_shape(args.digit)
+        elif args.preset:
+            print(f"Using preset shape: {args.preset}...")
+            shape = get_preset_shape(args.preset)
+        elif args.cross:
+            print("Using cross shape...")
+            shape = get_preset_shape("cross-small")
+        else:
+            # Default: simple cross
+            print("Using default cross shape...")
+            shape = get_preset_shape("cross-small")
+
+        # Generate solved puzzle
+        print("Generating solved puzzle...")
+        solved = generate_solved_puzzle(shape, max_attempts=args.max_attempts)
+
+        if solved is None:
+            print("Failed to generate a solved puzzle. Try a different shape or increase --max-attempts.")
+            sys.exit(1)
+
+        print("Found solution!")
 
     # Show shape info
     runs = shape.get_all_runs()
     print(f"Shape: {shape.width}x{shape.height}, {len(shape.get_active_cells())} cells, {len(runs)} equations")
     print()
-
-    # Generate solved puzzle
-    print("Generating solved puzzle...")
-    solved = generate_solved_puzzle(shape, max_attempts=args.max_attempts)
-
-    if solved is None:
-        print("Failed to generate a solved puzzle. Try a different shape or increase --max-attempts.")
-        sys.exit(1)
-
-    print("Found solution!")
     if args.print:
         print(solved)
         print()

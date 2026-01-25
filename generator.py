@@ -12,6 +12,8 @@ from equation import (
     parse_equation,
     tokenize,
     Operator,
+    is_valid_equation,
+    is_interesting_equation,
 )
 
 
@@ -62,7 +64,7 @@ def could_be_valid_equation(chars: list[str | None]) -> bool:
 
 
 def get_valid_chars_for_position(
-    chars: list[str | None], pos: int
+    chars: list[str | None], pos: int, require_interesting: bool = False
 ) -> list[str]:
     """Get characters that could validly go at a position in a partial run."""
     valid = []
@@ -77,10 +79,12 @@ def get_valid_chars_for_position(
 
         # If the run is now complete, do full validation
         if None not in test_chars:
-            from equation import is_valid_equation
-
-            if not is_valid_equation(test_chars):
-                continue
+            if require_interesting:
+                if not is_interesting_equation(test_chars):
+                    continue
+            else:
+                if not is_valid_equation(test_chars):
+                    continue
 
         valid.append(char)
 
@@ -88,9 +92,19 @@ def get_valid_chars_for_position(
 
 
 def generate_solved_puzzle(
-    shape: Shape, max_attempts: int = 1000, randomize: bool = True
+    shape: Shape,
+    max_attempts: int = 1000,
+    randomize: bool = True,
+    require_interesting: bool = False,
 ) -> Puzzle | None:
     """Generate a solved puzzle for the given shape using backtracking.
+
+    Args:
+        shape: The puzzle shape
+        max_attempts: Maximum backtracking attempts
+        randomize: Whether to randomize character selection
+        require_interesting: If True, all equations must be "interesting"
+            (have real math, no trivial operations like ÷1, +0, etc.)
 
     Returns None if no solution is found within max_attempts backtracks.
     """
@@ -122,7 +136,9 @@ def generate_solved_puzzle(
         for run in runs:
             pos_in_run = run.index((row, col))
             run_chars = get_run_chars(run)
-            valid_for_run = get_valid_chars_for_position(run_chars, pos_in_run)
+            valid_for_run = get_valid_chars_for_position(
+                run_chars, pos_in_run, require_interesting
+            )
             candidates &= set(valid_for_run)
 
         candidates = list(candidates)
@@ -141,11 +157,14 @@ def generate_solved_puzzle(
                     break
                 # If run is complete, check full validity
                 if None not in run_chars:
-                    from equation import is_valid_equation
-
-                    if not is_valid_equation(run_chars):
-                        valid = False
-                        break
+                    if require_interesting:
+                        if not is_interesting_equation(run_chars):
+                            valid = False
+                            break
+                    else:
+                        if not is_valid_equation(run_chars):
+                            valid = False
+                            break
 
             if valid and solve(cell_idx + 1):
                 return True

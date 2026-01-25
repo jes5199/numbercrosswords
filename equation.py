@@ -164,3 +164,47 @@ def is_valid_equation(chars: list[str]) -> bool:
 def get_valid_chars() -> set[str]:
     """Get the set of all valid cell characters."""
     return DIGIT_CHARS | set(OPERATOR_CHARS.keys()) | {EQUALS_CHAR}
+
+
+def is_interesting_equation(chars: list[str]) -> bool:
+    """Check if an equation is 'interesting' (has real math, not trivial).
+
+    Rejects:
+    - Equations with no operators (just X=X)
+    - Divide by 1 (÷1)
+    - Multiply by 1 (×1)
+    - Add/subtract 0 (+0, -0)
+    - Multiply by 0 (×0) - result is always 0, not interesting
+    """
+    parsed = parse_equation(chars)
+    if parsed is None:
+        return False
+
+    if not parsed.is_valid():
+        return False
+
+    all_tokens = parsed.left_tokens + parsed.right_tokens
+
+    # Must have at least one operator
+    has_operator = any(isinstance(t, Operator) for t in all_tokens)
+    if not has_operator:
+        return False
+
+    # Check for trivial operations
+    for i, token in enumerate(all_tokens):
+        if isinstance(token, Operator):
+            # Get the operand that follows
+            if i + 1 < len(all_tokens):
+                next_token = all_tokens[i + 1]
+                if isinstance(next_token, int):
+                    # ÷1 or ×1 is trivial
+                    if token in (Operator.DIV, Operator.MUL) and next_token == 1:
+                        return False
+                    # +0 or -0 is trivial
+                    if token in (Operator.ADD, Operator.SUB) and next_token == 0:
+                        return False
+                    # ×0 makes everything 0, not interesting
+                    if token == Operator.MUL and next_token == 0:
+                        return False
+
+    return True
