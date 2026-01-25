@@ -177,9 +177,27 @@ def generate_html(
             }}
             body {{
                 background: white;
+                margin: 0;
+                padding: 0;
+            }}
+            .puzzle-container {{
+                align-items: center;
+            }}
+            /* Slightly smaller cells for print to fit page */
+            .cell {{
+                width: 38px;
+                height: 38px;
+                font-size: 20px;
             }}
             .cell.input {{
                 background: white;
+            }}
+            h1 {{
+                text-align: center;
+                width: 100%;
+            }}
+            @page {{
+                margin: 0.75in;
             }}
         }}
     </style>

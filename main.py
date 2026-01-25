@@ -9,7 +9,7 @@ import random
 import sys
 from pathlib import Path
 
-from shape import Shape, get_digit_shape, get_preset_shape, DIGIT_SHAPES, PRESET_SHAPES
+from shape import Shape, get_digit_shape, get_large_digit_shape, get_preset_shape, DIGIT_SHAPES, PRESET_SHAPES
 from generator import generate_solved_puzzle
 from creator import create_puzzle, create_puzzle_with_difficulty
 from html_output import save_puzzle_html
@@ -32,7 +32,13 @@ def main():
         "--digit",
         type=int,
         choices=range(10),
-        help="Use a digit shape (0-9)",
+        help="Use a small digit shape (0-9)",
+    )
+    shape_group.add_argument(
+        "--large-digit",
+        type=int,
+        choices=range(10),
+        help="Use a large digit shape (0-9) for bigger puzzles",
     )
     shape_group.add_argument(
         "--cross",
@@ -138,6 +144,9 @@ def main():
         elif args.digit is not None:
             print(f"Using digit {args.digit} shape...")
             shape = get_digit_shape(args.digit)
+        elif args.large_digit is not None:
+            print(f"Using large digit {args.large_digit} shape...")
+            shape = get_large_digit_shape(args.large_digit)
         elif args.preset:
             print(f"Using preset shape: {args.preset}...")
             shape = get_preset_shape(args.preset)
@@ -151,7 +160,7 @@ def main():
 
         # Generate solved puzzle
         print("Generating solved puzzle...")
-        solved = generate_solved_puzzle(shape, max_attempts=args.max_attempts)
+        solved = generate_solved_puzzle(shape, max_attempts=args.max_attempts, require_interesting=True)
 
         if solved is None:
             print("Failed to generate a solved puzzle. Try a different shape or increase --max-attempts.")

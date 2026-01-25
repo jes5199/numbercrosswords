@@ -262,3 +262,137 @@ def get_preset_shape(name: str) -> Shape:
         available = ", ".join(PRESET_SHAPES.keys())
         raise ValueError(f"Unknown preset shape '{name}'. Available: {available}")
     return Shape.from_string(PRESET_SHAPES[name])
+
+
+# Large digit shapes for puzzle generation
+# All runs are exactly 5 cells - no 3-cell connectors
+# Equations share exactly ONE corner cell
+LARGE_DIGIT_SHAPES = {
+    # 0 - same structure as 8 (simple down-right stair)
+    0: """
+XXXXX
+    X
+    X
+    X
+    XXXXX
+        X
+        X
+        X
+        XXXXX
+            X
+            X
+            X
+            XXXXX
+""",
+    # 1 - simple L
+    1: """
+X
+X
+X
+X
+XXXXX
+""",
+    # 2 - stairs right-down-right
+    2: """
+XXXXX
+    X
+    X
+    X
+    XXXXX
+""",
+    # 3 - double L stairs
+    3: """
+XXXXX
+    X
+    X
+    X
+    XXXXX
+        X
+        X
+        X
+        XXXXX
+""",
+    # 4 - two L shapes connected
+    4: """
+X
+X
+X
+X
+XXXXX
+    X
+    X
+    X
+    XXXXX
+""",
+    # 5 - simple 3-step stair (down-right)
+    5: """
+XXXXX
+    X
+    X
+    X
+    XXXXX
+        X
+        X
+        X
+        XXXXX
+""",
+    # 6 - like digit 3 (4-step stair)
+    6: """
+XXXXX
+    X
+    X
+    X
+    XXXXX
+        X
+        X
+        X
+        XXXXX
+            X
+            X
+            X
+            XXXXX
+""",
+    # 7 - simple angle
+    7: """
+XXXXX
+    X
+    X
+    X
+    X
+""",
+    # 8 - long stairs down
+    8: """
+XXXXX
+    X
+    X
+    X
+    XXXXX
+        X
+        X
+        X
+        XXXXX
+            X
+            X
+            X
+            XXXXX
+""",
+    # 9 - stairs with tail
+    9: """
+XXXXX
+    X
+    X
+    X
+    XXXXX
+        X
+        X
+        X
+        X
+""",
+}
+
+
+def get_large_digit_shape(digit: int) -> Shape:
+    """Get the large shape for a digit 0-9."""
+    if digit not in LARGE_DIGIT_SHAPES:
+        raise ValueError(f"No large shape defined for digit {digit}")
+    return Shape.from_string(LARGE_DIGIT_SHAPES[digit])
