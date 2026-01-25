@@ -570,6 +570,96 @@ def generate_figure_eight(max_attempts: int = 1000) -> GrowingPuzzle | None:
     return None
 
 
+def generate_figure_zero(max_attempts: int = 1000) -> GrowingPuzzle | None:
+    """Generate a figure-0 shaped puzzle (rectangular outline).
+
+    Shape:
+        XXXXX
+        X   X
+        X   X
+        X   X
+        X   X
+        X   X
+        X   X
+        X   X
+        XXXXX
+
+    The figure-0 has:
+    - 2 horizontal 5-cell equations (top, bottom)
+    - 2 vertical 9-cell equations (left, right sides)
+
+    Returns a GrowingPuzzle with the figure-0 filled in, or None if failed.
+    """
+    from collections import defaultdict
+
+    # Pre-generate equation pools
+    nine_cells = []
+    five_cells = []
+
+    for i in range(500):
+        eq9 = generate_interesting_equation(9)
+        if eq9:
+            # Store (equation, pos0, pos8) - top and bottom corners
+            nine_cells.append((eq9, eq9[0], eq9[8]))
+        if len(nine_cells) >= 200:
+            break
+
+    for i in range(500):
+        eq5 = generate_interesting_equation(5)
+        if eq5:
+            # Store (equation, start, end)
+            five_cells.append((eq5, eq5[0], eq5[4]))
+        if len(five_cells) >= 200:
+            break
+
+    if len(nine_cells) < 10 or len(five_cells) < 10:
+        return None
+
+    # Build lookup for 5-cell by (start, end)
+    five_by_pair = defaultdict(list)
+    for eq, start, end in five_cells:
+        five_by_pair[(start, end)].append(eq)
+
+    # Shuffle for randomness
+    random.shuffle(nine_cells)
+
+    # Search: find two verticals + two compatible horizontals
+    for left_eq, A, C in nine_cells:  # A=top-left, C=bottom-left
+        for right_eq, B, D in nine_cells:  # B=top-right, D=bottom-right
+            if left_eq == right_eq:
+                continue
+
+            top_options = five_by_pair.get((A, B), [])
+            bot_options = five_by_pair.get((C, D), [])
+
+            if top_options and bot_options:
+                top = random.choice(top_options)
+                bot = random.choice(bot_options)
+
+                # Build the puzzle
+                puzzle = GrowingPuzzle()
+
+                # Top horizontal (row 0, cols 0-4)
+                for col, char in enumerate(top):
+                    puzzle.set_cell(0, col, char)
+
+                # Bottom horizontal (row 8, cols 0-4)
+                for col, char in enumerate(bot):
+                    puzzle.set_cell(8, col, char)
+
+                # Left vertical (col 0, rows 0-8)
+                for row, char in enumerate(left_eq):
+                    puzzle.set_cell(row, 0, char)
+
+                # Right vertical (col 4, rows 0-8)
+                for row, char in enumerate(right_eq):
+                    puzzle.set_cell(row, 4, char)
+
+                return puzzle.normalize()
+
+    return None
+
+
 def generate_figure_three(max_attempts: int = 1000) -> GrowingPuzzle | None:
     """Generate a figure-3 shaped puzzle (like 8 but no left side).
 
