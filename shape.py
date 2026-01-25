@@ -352,9 +352,11 @@ XXXXX
             X
             XXXXX
 """,
-    # 7 - simple angle
+    # 7 - five across, seven down
     7: """
 XXXXX
+    X
+    X
     X
     X
     X
