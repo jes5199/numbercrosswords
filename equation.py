@@ -153,8 +153,33 @@ def parse_equation(chars: list[str]) -> ParsedEquation | None:
     return ParsedEquation(left_tokens=left_tokens, right_tokens=right_tokens)
 
 
+def has_leading_zeros(chars: list[str]) -> bool:
+    """Check if any multi-digit number has a leading zero.
+
+    E.g., "08" is invalid, but "0" alone is fine.
+    """
+    i = 0
+    while i < len(chars):
+        if chars[i] in DIGIT_CHARS:
+            # Found start of a number
+            num_start = i
+            while i < len(chars) and chars[i] in DIGIT_CHARS:
+                i += 1
+            num_len = i - num_start
+            # Leading zero if number has multiple digits and starts with 0
+            if num_len > 1 and chars[num_start] == "0":
+                return True
+        else:
+            i += 1
+    return False
+
+
 def is_valid_equation(chars: list[str]) -> bool:
     """Check if a list of characters forms a valid equation."""
+    # Check for leading zeros (e.g., "08" is invalid)
+    if has_leading_zeros(chars):
+        return False
+
     parsed = parse_equation(chars)
     if parsed is None:
         return False
@@ -170,6 +195,7 @@ def is_interesting_equation(chars: list[str]) -> bool:
     """Check if an equation is 'interesting' (has real math, not trivial).
 
     Rejects:
+    - Leading zeros (e.g., 08)
     - Equations with no operators (just X=X)
     - Divide by 1 (÷1)
     - Multiply by 1 (×1)
@@ -177,12 +203,12 @@ def is_interesting_equation(chars: list[str]) -> bool:
     - Multiply by 0 (×0) - result is always 0, not interesting
     - Equations that equal 0 with only one operator (e.g., 8-8=0 is just X=X in disguise)
     """
-    parsed = parse_equation(chars)
-    if parsed is None:
+    # Use is_valid_equation which includes leading zero check
+    if not is_valid_equation(chars):
         return False
 
-    if not parsed.is_valid():
-        return False
+    # We know it's valid, so parse should succeed
+    parsed = parse_equation(chars)
 
     all_tokens = parsed.left_tokens + parsed.right_tokens
 

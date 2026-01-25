@@ -7,12 +7,13 @@ import sys
 # Book configuration: (level, shape_args, seed)
 LEVELS = [
     (1, ["--large-digit", "1"], 5001),
-    (2, ["--large-digit", "7"], 2002),
+    (2, ["--large-digit", "7"], 2003),
     (3, ["--figure-four"], 1003),
     (4, ["--figure-three"], 4004),
     (5, ["--figure-zero"], 1005),
     (6, ["--figure-eight"], 42),
     (7, ["--figure-two"], 2222),
+    (8, ["--grow", "6"], 8008),
 ]
 
 
@@ -25,7 +26,7 @@ def main():
             prev_link = f"level{level - 1}.html"
 
         if level == len(LEVELS):
-            next_link = "index.html"
+            next_link = "coming-soon.html"
         else:
             next_link = f"level{level + 1}.html"
 
