@@ -284,13 +284,17 @@ XXXXX
             X
             XXXXX
 """,
-    # 1 - simple L
+    # 1 - vertical line (single 9-cell equation)
     1: """
 X
 X
 X
 X
-XXXXX
+X
+X
+X
+X
+X
 """,
     # 2 - stairs right-down-right
     2: """
