@@ -284,12 +284,8 @@ XXXXX
             X
             XXXXX
 """,
-    # 1 - vertical line (single 9-cell equation)
+    # 1 - vertical line (single 5-cell equation)
     1: """
-X
-X
-X
-X
 X
 X
 X
