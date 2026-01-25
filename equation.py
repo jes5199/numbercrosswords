@@ -175,6 +175,7 @@ def is_interesting_equation(chars: list[str]) -> bool:
     - Multiply by 1 (×1)
     - Add/subtract 0 (+0, -0)
     - Multiply by 0 (×0) - result is always 0, not interesting
+    - Equations that equal 0 with only one operator (e.g., 8-8=0 is just X=X in disguise)
     """
     parsed = parse_equation(chars)
     if parsed is None:
@@ -185,9 +186,9 @@ def is_interesting_equation(chars: list[str]) -> bool:
 
     all_tokens = parsed.left_tokens + parsed.right_tokens
 
-    # Must have at least one operator
-    has_operator = any(isinstance(t, Operator) for t in all_tokens)
-    if not has_operator:
+    # Count operators
+    operator_count = sum(1 for t in all_tokens if isinstance(t, Operator))
+    if operator_count == 0:
         return False
 
     # Check for trivial operations
@@ -206,5 +207,11 @@ def is_interesting_equation(chars: list[str]) -> bool:
                     # ×0 makes everything 0, not interesting
                     if token == Operator.MUL and next_token == 0:
                         return False
+
+    # =0 with only one operator is trivial (like 8-8=0, essentially X=X)
+    # Multiple operators are okay (like 8-4-4=0)
+    result = parsed.evaluate_side(parsed.left_tokens)
+    if result == 0 and operator_count == 1:
+        return False
 
     return True

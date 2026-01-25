@@ -305,9 +305,27 @@ def find_crossing_equation(
     """Find an equation that crosses at the given position.
 
     The crossing cell already has a value that must be preserved.
+    Also ensures the equation doesn't extend existing runs (would create invalid long equations).
     """
     existing_char = puzzle.get_cell(cross_row, cross_col)
     if existing_char is None:
+        return None
+
+    # Calculate start and end positions
+    if direction == "vertical":
+        start_r = cross_row - cross_position
+        end_r = start_r + length - 1
+        # Check cells just before start and just after end
+        before_cell = puzzle.get_cell(start_r - 1, cross_col)
+        after_cell = puzzle.get_cell(end_r + 1, cross_col)
+    else:
+        start_c = cross_col - cross_position
+        end_c = start_c + length - 1
+        before_cell = puzzle.get_cell(cross_row, start_c - 1)
+        after_cell = puzzle.get_cell(cross_row, end_c + 1)
+
+    # If there's a cell before or after, we'd extend an existing run - skip
+    if before_cell is not None or after_cell is not None:
         return None
 
     for _ in range(max_attempts):
