@@ -358,18 +358,31 @@ def find_crossing_equation(
 
 def grow_puzzle(
     num_equations: int = 4,
-    equation_length: int = 5,
+    equation_length: int | tuple[int, int] = 5,
     max_attempts: int = 100,
 ) -> GrowingPuzzle | None:
     """Grow a puzzle with the specified number of equations.
 
+    Args:
+        num_equations: Number of equations to generate
+        equation_length: Either a single length, or (min, max) for mixed lengths
+        max_attempts: Maximum generation attempts
+
     Alternates between horizontal and vertical equations.
     """
+    # Handle mixed lengths
+    if isinstance(equation_length, tuple):
+        min_len, max_len = equation_length
+        lengths = [l for l in [5, 7, 9] if min_len <= l <= max_len]
+    else:
+        lengths = [equation_length]
+
     for _ in range(max_attempts):
         puzzle = GrowingPuzzle()
 
         # Start with first horizontal equation at row 0
-        first_eq = generate_interesting_equation(equation_length)
+        first_len = random.choice(lengths)
+        first_eq = generate_interesting_equation(first_len)
         if first_eq is None:
             continue
 
@@ -398,38 +411,44 @@ def grow_puzzle(
                 success = False
                 break
 
-            # Try random digit cells
+            # Try random digit cells and lengths
             random.shuffle(digit_cells)
             placed = False
 
-            for cross_row, cross_col, cross_char in digit_cells:
-                # Try different crossing positions
-                for cross_pos in range(equation_length):
-                    crossing_eq = find_crossing_equation(
-                        puzzle, cross_row, cross_col, direction,
-                        equation_length, cross_pos
-                    )
+            # Try different lengths
+            trial_lengths = lengths.copy()
+            random.shuffle(trial_lengths)
 
-                    if crossing_eq is not None:
-                        # Place the equation
-                        positions = []
-                        for i, char in enumerate(crossing_eq):
-                            if direction == "vertical":
-                                r = cross_row - cross_pos + i
-                                c = cross_col
-                            else:
-                                r = cross_row
-                                c = cross_col - cross_pos + i
-                            puzzle.set_cell(r, c, char)
-                            puzzle.cell_directions.setdefault((r, c), set()).add(direction)
-                            positions.append((r, c))
-
-                        puzzle.equations.append((direction, positions))
-                        placed = True
-                        break
-
+            for eq_length in trial_lengths:
                 if placed:
                     break
+                for cross_row, cross_col, cross_char in digit_cells:
+                    if placed:
+                        break
+                    # Try different crossing positions
+                    for cross_pos in range(eq_length):
+                        crossing_eq = find_crossing_equation(
+                            puzzle, cross_row, cross_col, direction,
+                            eq_length, cross_pos
+                        )
+
+                        if crossing_eq is not None:
+                            # Place the equation
+                            positions = []
+                            for i, char in enumerate(crossing_eq):
+                                if direction == "vertical":
+                                    r = cross_row - cross_pos + i
+                                    c = cross_col
+                                else:
+                                    r = cross_row
+                                    c = cross_col - cross_pos + i
+                                puzzle.set_cell(r, c, char)
+                                puzzle.cell_directions.setdefault((r, c), set()).add(direction)
+                                positions.append((r, c))
+
+                            puzzle.equations.append((direction, positions))
+                            placed = True
+                            break
 
             if not placed:
                 success = False

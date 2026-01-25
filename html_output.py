@@ -83,7 +83,7 @@ def generate_html(
             font-weight: bold;
         }}
         .cell.inactive {{
-            background: transparent;
+            background: #e0e0e0;
             width: 48px;
             height: 48px;
         }}
@@ -154,16 +154,15 @@ def generate_html(
             font-size: 14px;
         }}
         .keyboard {{
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
             gap: 5px;
-            justify-content: center;
-            max-width: 400px;
+            max-width: 260px;
         }}
         .key {{
-            width: 44px;
-            height: 44px;
-            font-size: 20px;
+            width: 48px;
+            height: 48px;
+            font-size: 22px;
             font-weight: bold;
             border: 1px solid #ccc;
             border-radius: 4px;

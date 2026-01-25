@@ -52,6 +52,14 @@ def main():
         help="Grow a puzzle with N equations (guarantees interesting math)",
     )
 
+    # Equation length (for --grow)
+    parser.add_argument(
+        "--length",
+        type=str,
+        default="5-9",
+        help="Equation length for --grow: single (5,7,9) or range (5-9 for mixed)",
+    )
+
     # Difficulty
     parser.add_argument(
         "--difficulty",
@@ -105,8 +113,16 @@ def main():
 
     # Load or create shape, or grow puzzle
     if args.grow:
-        print(f"Growing puzzle with {args.grow} equations...")
-        grown = grow_puzzle(num_equations=args.grow, equation_length=5, max_attempts=args.max_attempts)
+        # Parse length argument (e.g., "5", "7", "5-9")
+        if "-" in args.length:
+            min_len, max_len = map(int, args.length.split("-"))
+            equation_length = (min_len, max_len)
+            print(f"Growing puzzle with {args.grow} equations (mixed lengths {min_len}-{max_len})...")
+        else:
+            equation_length = int(args.length)
+            print(f"Growing puzzle with {args.grow} equations (length {equation_length})...")
+
+        grown = grow_puzzle(num_equations=args.grow, equation_length=equation_length, max_attempts=args.max_attempts)
 
         if grown is None:
             print("Failed to grow puzzle. Try fewer equations or increase --max-attempts.")
