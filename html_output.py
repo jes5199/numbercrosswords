@@ -179,17 +179,6 @@ def generate_html(
         .nav .disabled {{
             visibility: hidden;
         }}
-        .toc-link {{
-            margin-top: 20px;
-        }}
-        .toc-link a {{
-            color: #666;
-            text-decoration: none;
-            font-size: 14px;
-        }}
-        .toc-link a:hover {{
-            text-decoration: underline;
-        }}
         .attribution {{
             margin-top: 30px;
             color: #999;
@@ -220,7 +209,7 @@ def generate_html(
 
         /* Hide interactive elements when printing */
         @media print {{
-            .keyboard, .buttons, .info, .nav, .toc-link, .attribution {{
+            .keyboard, .buttons, .info, .nav, .attribution {{
                 display: none !important;
             }}
             body {{
@@ -272,11 +261,8 @@ def generate_html(
 
         <div class="nav">
             <a href="{prev_link}" class="{'disabled' if not prev_link else ''}">Previous</a>
+            <a href="index.html">Back to Puzzle Book</a>
             <a href="{next_link}" class="{'disabled' if not next_link else ''}">Next</a>
-        </div>
-
-        <div class="toc-link">
-            <a href="index.html">Back to Table of Contents</a>
         </div>
 
         <div class="attribution">
