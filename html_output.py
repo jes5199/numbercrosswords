@@ -303,6 +303,9 @@ def generate_html(
                     }} else {{
                         cellDiv.className += ' input';
                         const input = document.createElement('input');
+                        input.type = 'text';
+                        input.inputMode = 'numeric';
+                        input.pattern = '[0-9]*';
                         input.maxLength = 1;
                         input.dataset.row = rowIdx;
                         input.dataset.col = colIdx;
@@ -798,6 +801,9 @@ def generate_ten_columns_html(
                     }} else {{
                         cellDiv.className += ' input';
                         const input = document.createElement('input');
+                        input.type = 'text';
+                        input.inputMode = 'numeric';
+                        input.pattern = '[0-9]*';
                         input.maxLength = 1;
                         input.dataset.row = rowIdx;
                         input.dataset.col = colIdx;
