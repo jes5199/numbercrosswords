@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Crosswords</title>
+    <title>Number Crossword</title>
     <style>
         * {
             box-sizing: border-box;
@@ -139,22 +139,6 @@
         .nav .disabled {
             visibility: hidden;
         }
-        .toc-link {
-            margin-top: 20px;
-        }
-        .toc-link a {
-            color: #666;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .toc-link a:hover {
-            text-decoration: underline;
-        }
-        .attribution {
-            margin-top: 30px;
-            color: #999;
-            font-size: 12px;
-        }
         .keyboard {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -180,7 +164,7 @@
 
         /* Hide interactive elements when printing */
         @media print {
-            .keyboard, .buttons, .info, .nav, .toc-link, .attribution {
+            .keyboard, .buttons, .info, .nav {
                 display: none !important;
             }
             body {
@@ -211,8 +195,8 @@
     </style>
 </head>
 <body>
-    <h1>Number Crosswords</h1>
-    <p class="subtitle">Level 11</p>
+    <h1>Number Crossword</h1>
+    
 
     <div class="puzzle-container">
         <div class="grid" id="grid"></div>
@@ -231,21 +215,13 @@
         </div>
 
         <div class="nav">
-            <a href="level10.html" class="">Previous</a>
-            <a href="level12.html" class="">Next</a>
-        </div>
-
-        <div class="toc-link">
-            <a href="index.html">Back to Table of Contents</a>
-        </div>
-
-        <div class="attribution">
-            Designed by Jes and Isaac Dolan-Wolfe
+            <a href="" class="disabled">Previous</a>
+            <a href="" class="disabled">Next</a>
         </div>
     </div>
 
     <script>
-        const gridData = [[{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "4", "answer": "4"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "3", "answer": "3"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "+", "answer": "+"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "7"}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": null, "answer": "6"}, {"active": true, "clue": "\u00d7", "answer": "\u00d7"}, {"active": true, "clue": null, "answer": "1"}, {"active": true, "clue": "5", "answer": "5"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": null, "answer": "9"}, {"active": true, "clue": null, "answer": "0"}], [{"active": true, "clue": "1", "answer": "1"}, {"active": false}, {"active": false}, {"active": true, "clue": "=", "answer": "="}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": "+", "answer": "+"}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "1"}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": "8", "answer": "8"}, {"active": false}, {"active": false}, {"active": true, "clue": "1", "answer": "1"}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": null, "answer": "9"}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "8"}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": "=", "answer": "="}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": null, "answer": "1"}, {"active": true, "clue": null, "answer": "4"}, {"active": true, "clue": "\u00d7", "answer": "\u00d7"}, {"active": true, "clue": "2", "answer": "2"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": "2", "answer": "2"}, {"active": true, "clue": "8", "answer": "8"}], [{"active": true, "clue": null, "answer": "5"}, {"active": true, "clue": "7", "answer": "7"}, {"active": true, "clue": "+", "answer": "+"}, {"active": true, "clue": "5", "answer": "5"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": "6", "answer": "6"}, {"active": true, "clue": null, "answer": "2"}], [{"active": true, "clue": null, "answer": "0"}, {"active": false}, {"active": false}, {"active": true, "clue": "+", "answer": "+"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "7", "answer": "7"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "=", "answer": "="}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "3"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "2"}, {"active": false}, {"active": false}, {"active": false}]];
+        const gridData = [[{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "1", "answer": "1"}, {"active": false}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "+", "answer": "+"}, {"active": false}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "9", "answer": "9"}, {"active": true, "clue": "+", "answer": "+"}, {"active": true, "clue": "1", "answer": "1"}, {"active": true, "clue": null, "answer": "4"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": null, "answer": "2"}, {"active": true, "clue": null, "answer": "3"}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "-", "answer": "-"}, {"active": false}, {"active": false}, {"active": true, "clue": "=", "answer": "="}, {"active": false}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": "9", "answer": "9"}, {"active": true, "clue": "-", "answer": "-"}, {"active": true, "clue": null, "answer": "4"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": null, "answer": "5"}, {"active": false}, {"active": false}, {"active": true, "clue": "5", "answer": "5"}, {"active": true, "clue": "+", "answer": "+"}, {"active": true, "clue": null, "answer": "4"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": "9", "answer": "9"}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "=", "answer": "="}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "4", "answer": "4"}, {"active": true, "clue": "5", "answer": "5"}, {"active": true, "clue": "+", "answer": "+"}, {"active": true, "clue": null, "answer": "4"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": null, "answer": "4"}, {"active": true, "clue": "9", "answer": "9"}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "5", "answer": "5"}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "+", "answer": "+"}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "1", "answer": "1"}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "8", "answer": "8"}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "=", "answer": "="}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "1"}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "1"}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "3"}, {"active": false}]];
         const validChars = ['0','1','2','3','4','5','6','7','8','9'];  // Only digits (operators always visible)
         let focusedInput = null;
 
