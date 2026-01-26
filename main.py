@@ -90,6 +90,11 @@ def main():
         default="5-9",
         help="Equation length for --grow: single (5,7,9) or range (5-9 for mixed)",
     )
+    parser.add_argument(
+        "--multi-op",
+        action="store_true",
+        help="Prefer equations with multiple operators (for --grow)",
+    )
 
     # Difficulty
     parser.add_argument(
@@ -226,7 +231,7 @@ def main():
             equation_length = int(args.length)
             print(f"Growing puzzle with {args.grow} equations (length {equation_length})...")
 
-        grown = grow_puzzle(num_equations=args.grow, equation_length=equation_length, max_attempts=args.max_attempts)
+        grown = grow_puzzle(num_equations=args.grow, equation_length=equation_length, max_attempts=args.max_attempts, multi_op=args.multi_op)
 
         if grown is None:
             print("Failed to grow puzzle. Try fewer equations or increase --max-attempts.")

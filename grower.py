@@ -79,8 +79,13 @@ class GrowingPuzzle:
         return "\n".join(lines)
 
 
-def generate_interesting_equation(length: int, max_attempts: int = 1000) -> list[str] | None:
+def generate_interesting_equation(length: int, max_attempts: int = 1000, multi_op: bool = False) -> list[str] | None:
     """Generate a random interesting equation of given length.
+
+    Args:
+        length: Length of equation in characters
+        max_attempts: Maximum generation attempts
+        multi_op: If True, prefer equations with multiple operators
 
     Returns a list of characters, or None if failed.
     """
@@ -88,13 +93,13 @@ def generate_interesting_equation(length: int, max_attempts: int = 1000) -> list
     # Pattern: NUM OP NUM = NUM (5 chars minimum: a+b=c)
 
     for _ in range(max_attempts):
-        chars = _generate_random_equation(length)
+        chars = _generate_random_equation(length, multi_op=multi_op)
         if chars and is_interesting_equation(chars):
             return chars
     return None
 
 
-def _generate_random_equation(length: int) -> list[str] | None:
+def _generate_random_equation(length: int, multi_op: bool = False) -> list[str] | None:
     """Generate a random valid equation of given length."""
     if length < 5:
         return None  # Minimum: a+b=c
@@ -119,21 +124,32 @@ def _generate_random_equation(length: int) -> list[str] | None:
                     return list(eq)
 
         elif length == 7:
-            # Options: ab op c = de, a op bc = de, a op b = cd (if result is 2-digit)
-            structures = [
-                lambda: _try_structure_7_v1(),  # ab op c = de
-                lambda: _try_structure_7_v2(),  # a op bc = de
-                lambda: _try_structure_7_v3(),  # a op b op c = d
-            ]
-            random.shuffle(structures)
-            for struct in structures:
-                eq = struct()
-                if eq and len(eq) == length:
-                    return list(eq)
+            if multi_op:
+                # Only use multi-operator structure
+                eq = _try_structure_7_v3()  # a op b op c = d
+            else:
+                # Options: ab op c = de, a op bc = de, a op b op c = d
+                structures = [
+                    lambda: _try_structure_7_v1(),  # ab op c = de
+                    lambda: _try_structure_7_v2(),  # a op bc = de
+                    lambda: _try_structure_7_v3(),  # a op b op c = d
+                ]
+                random.shuffle(structures)
+                for struct in structures:
+                    eq = struct()
+                    if eq and len(eq) == length:
+                        return list(eq)
+                continue
+            if eq and len(eq) == length:
+                return list(eq)
 
         elif length == 9:
-            # More complex: ab op cd = ef, abc op d = efg, etc.
-            eq = _try_structure_9()
+            if multi_op:
+                # Only use multi-operator structure
+                eq = _try_9_a_op_b_op_c_de()  # a op b op c = de
+            else:
+                # More complex: ab op cd = ef, abc op d = efg, etc.
+                eq = _try_structure_9()
             if eq and len(eq) == length:
                 return list(eq)
 
@@ -301,6 +317,7 @@ def find_crossing_equation(
     length: int,
     cross_position: int,  # Position in new equation where crossing happens
     max_attempts: int = 500,
+    multi_op: bool = False,
 ) -> list[str] | None:
     """Find an equation that crosses at the given position.
 
@@ -329,7 +346,7 @@ def find_crossing_equation(
         return None
 
     for _ in range(max_attempts):
-        eq = generate_interesting_equation(length)
+        eq = generate_interesting_equation(length, multi_op=multi_op)
         if eq is None:
             continue
 
@@ -360,6 +377,7 @@ def grow_puzzle(
     num_equations: int = 4,
     equation_length: int | tuple[int, int] = 5,
     max_attempts: int = 100,
+    multi_op: bool = False,
 ) -> GrowingPuzzle | None:
     """Grow a puzzle with the specified number of equations.
 
@@ -367,6 +385,7 @@ def grow_puzzle(
         num_equations: Number of equations to generate
         equation_length: Either a single length, or (min, max) for mixed lengths
         max_attempts: Maximum generation attempts
+        multi_op: If True, prefer equations with multiple operators
 
     Alternates between horizontal and vertical equations.
     """
@@ -382,7 +401,7 @@ def grow_puzzle(
 
         # Start with first horizontal equation at row 0
         first_len = random.choice(lengths)
-        first_eq = generate_interesting_equation(first_len)
+        first_eq = generate_interesting_equation(first_len, multi_op=multi_op)
         if first_eq is None:
             continue
 
@@ -429,7 +448,7 @@ def grow_puzzle(
                     for cross_pos in range(eq_length):
                         crossing_eq = find_crossing_equation(
                             puzzle, cross_row, cross_col, direction,
-                            eq_length, cross_pos
+                            eq_length, cross_pos, multi_op=multi_op
                         )
 
                         if crossing_eq is not None:
