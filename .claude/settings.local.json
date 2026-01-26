@@ -9,7 +9,8 @@
       "Bash(do)",
       "Bash(echo:*)",
       "Bash(done)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(dig:*)"
     ]
   }
 }

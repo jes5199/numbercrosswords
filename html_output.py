@@ -73,9 +73,15 @@ def generate_html(
             align-items: center;
             gap: 20px;
         }}
+        .grid-wrapper {{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }}
         .grid {{
             display: inline-block;
             background: white;
+            transform-origin: top center;
         }}
         .row {{
             display: flex;
@@ -244,7 +250,9 @@ def generate_html(
     {f'<p class="subtitle">{subtitle}</p>' if subtitle else ''}
 
     <div class="puzzle-container">
-        <div class="grid" id="grid"></div>
+        <div class="grid-wrapper">
+            <div class="grid" id="grid"></div>
+        </div>
 
         <div class="keyboard" id="keyboard"></div>
 
@@ -458,9 +466,30 @@ def generate_html(
             }});
         }}
 
+        function scaleGrid() {{
+            const grid = document.getElementById('grid');
+            const wrapper = grid.parentElement;
+            // Reset scale to measure natural width
+            grid.style.transform = 'scale(1)';
+            const gridWidth = grid.offsetWidth;
+            const availableWidth = wrapper.offsetWidth;
+
+            if (gridWidth > availableWidth) {{
+                const scale = availableWidth / gridWidth;
+                grid.style.transform = `scale(${{scale}})`;
+                // Adjust wrapper height to match scaled grid
+                wrapper.style.height = (grid.offsetHeight * scale) + 'px';
+            }} else {{
+                grid.style.transform = 'scale(1)';
+                wrapper.style.height = 'auto';
+            }}
+        }}
+
         // Initialize
         buildGrid();
         buildKeyboard();
+        scaleGrid();
+        window.addEventListener('resize', scaleGrid);
 
         // Focus first input
         const firstInput = document.querySelector('.cell.input input');
