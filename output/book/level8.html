@@ -139,6 +139,22 @@
         .nav .disabled {
             visibility: hidden;
         }
+        .toc-link {
+            margin-top: 20px;
+        }
+        .toc-link a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .toc-link a:hover {
+            text-decoration: underline;
+        }
+        .attribution {
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+        }
         .keyboard {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -164,7 +180,7 @@
 
         /* Hide interactive elements when printing */
         @media print {
-            .keyboard, .buttons, .info, .nav {
+            .keyboard, .buttons, .info, .nav, .toc-link, .attribution {
                 display: none !important;
             }
             body {
@@ -217,6 +233,14 @@
         <div class="nav">
             <a href="level7.html" class="">Previous</a>
             <a href="level9.html" class="">Next</a>
+        </div>
+
+        <div class="toc-link">
+            <a href="index.html">Back to Table of Contents</a>
+        </div>
+
+        <div class="attribution">
+            Designed by Jes and Isaac Dolan-Wolfe
         </div>
     </div>
 

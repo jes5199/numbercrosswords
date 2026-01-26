@@ -1,86 +1,46 @@
-"""HTML output generation for number crossword puzzles."""
-
-from puzzle import Puzzle
-from creator import PuzzleCreationResult
-
-
-def generate_html(
-    result: PuzzleCreationResult,
-    title: str = "Number Crossword",
-    subtitle: str = "",
-    show_solution_button: bool = True,
-    prev_link: str = "",
-    next_link: str = "",
-) -> str:
-    """Generate an interactive HTML page for a puzzle."""
-    puzzle = result.puzzle
-    solution = result.solution
-    shape = puzzle.shape
-
-    # Build grid data
-    grid_data = []
-    for row in range(shape.height):
-        row_data = []
-        for col in range(shape.width):
-            if shape.is_active(row, col):
-                clue = puzzle.get_cell(row, col)
-                answer = solution.get_cell(row, col)
-                row_data.append({
-                    "active": True,
-                    "clue": clue,
-                    "answer": answer,
-                })
-            else:
-                row_data.append({"active": False})
-        grid_data.append(row_data)
-
-    # Convert to JSON for JavaScript
-    import json
-    grid_json = json.dumps(grid_data)
-
-    html = f"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title}</title>
+    <title>Number Crosswords</title>
     <style>
-        * {{
+        * {
             box-sizing: border-box;
-        }}
-        body {{
+        }
+        body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             max-width: 800px;
             margin: 40px auto;
             padding: 20px;
             background: #f5f5f5;
-        }}
-        h1 {{
+        }
+        h1 {
             text-align: center;
             color: #333;
             margin-bottom: 5px;
-        }}
-        .subtitle {{
+        }
+        .subtitle {
             text-align: center;
             color: #666;
             font-size: 24px;
             margin-top: 0;
             margin-bottom: 20px;
-        }}
-        .puzzle-container {{
+        }
+        .puzzle-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
-        }}
-        .grid {{
+        }
+        .grid {
             display: inline-block;
             background: white;
-        }}
-        .row {{
+        }
+        .row {
             display: flex;
-        }}
-        .cell {{
+        }
+        .cell {
             width: 48px;
             height: 48px;
             display: flex;
@@ -88,23 +48,23 @@ def generate_html(
             justify-content: center;
             font-size: 24px;
             font-weight: bold;
-        }}
-        .cell.inactive {{
+        }
+        .cell.inactive {
             background: white;
-        }}
-        .cell.clue {{
+        }
+        .cell.clue {
             background: white;
             color: #333;
             border: 2px solid #333;
-        }}
-        .cell.input {{
+        }
+        .cell.input {
             background: #d0d0d0;
             border: 2px solid #333;
-        }}
-        .cell.input.filled {{
+        }
+        .cell.input.filled {
             background: white;
-        }}
-        .cell input {{
+        }
+        .cell input {
             width: 100%;
             height: 100%;
             border: none;
@@ -113,95 +73,95 @@ def generate_html(
             font-weight: bold;
             background: transparent;
             outline: none;
-        }}
-        .cell.correct {{
+        }
+        .cell.correct {
             background: #d4edda !important;
-        }}
-        .cell.incorrect {{
+        }
+        .cell.incorrect {
             background: #f8d7da !important;
-        }}
-        .buttons {{
+        }
+        .buttons {
             display: flex;
             gap: 10px;
-        }}
-        button {{
+        }
+        button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
             border: none;
             border-radius: 4px;
             transition: background 0.2s;
-        }}
-        .check-btn {{
+        }
+        .check-btn {
             background: #007bff;
             color: white;
-        }}
-        .check-btn:hover {{
+        }
+        .check-btn:hover {
             background: #0056b3;
-        }}
-        .clear-btn {{
+        }
+        .clear-btn {
             background: #6c757d;
             color: white;
-        }}
-        .clear-btn:hover {{
+        }
+        .clear-btn:hover {
             background: #545b62;
-        }}
-        .solution-btn {{
+        }
+        .solution-btn {
             background: #28a745;
             color: white;
-        }}
-        .solution-btn:hover {{
+        }
+        .solution-btn:hover {
             background: #1e7e34;
-        }}
-        .info {{
+        }
+        .info {
             text-align: center;
             color: #666;
             font-size: 14px;
-        }}
-        .nav {{
+        }
+        .nav {
             display: flex;
             justify-content: space-between;
             width: 100%;
             max-width: 300px;
             margin-top: 10px;
-        }}
-        .nav a {{
+        }
+        .nav a {
             padding: 10px 20px;
             background: #6c757d;
             color: white;
             text-decoration: none;
             border-radius: 4px;
             font-size: 16px;
-        }}
-        .nav a:hover {{
+        }
+        .nav a:hover {
             background: #545b62;
-        }}
-        .nav .disabled {{
+        }
+        .nav .disabled {
             visibility: hidden;
-        }}
-        .toc-link {{
+        }
+        .toc-link {
             margin-top: 20px;
-        }}
-        .toc-link a {{
+        }
+        .toc-link a {
             color: #666;
             text-decoration: none;
             font-size: 14px;
-        }}
-        .toc-link a:hover {{
+        }
+        .toc-link a:hover {
             text-decoration: underline;
-        }}
-        .attribution {{
+        }
+        .attribution {
             margin-top: 30px;
             color: #999;
             font-size: 12px;
-        }}
-        .keyboard {{
+        }
+        .keyboard {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 5px;
             max-width: 260px;
-        }}
-        .key {{
+        }
+        .key {
             width: 48px;
             height: 48px;
             font-size: 22px;
@@ -210,49 +170,49 @@ def generate_html(
             border-radius: 4px;
             background: white;
             cursor: pointer;
-        }}
-        .key:hover {{
+        }
+        .key:hover {
             background: #e9ecef;
-        }}
-        .key:active {{
+        }
+        .key:active {
             background: #dee2e6;
-        }}
+        }
 
         /* Hide interactive elements when printing */
-        @media print {{
-            .keyboard, .buttons, .info, .nav, .toc-link, .attribution {{
+        @media print {
+            .keyboard, .buttons, .info, .nav, .toc-link, .attribution {
                 display: none !important;
-            }}
-            body {{
+            }
+            body {
                 background: white;
                 margin: 0;
                 padding: 0;
-            }}
-            .puzzle-container {{
+            }
+            .puzzle-container {
                 align-items: center;
-            }}
+            }
             /* Slightly smaller cells for print to fit page */
-            .cell {{
+            .cell {
                 width: 38px;
                 height: 38px;
                 font-size: 20px;
-            }}
-            .cell.input {{
+            }
+            .cell.input {
                 background: white;
-            }}
-            h1 {{
+            }
+            h1 {
                 text-align: center;
                 width: 100%;
-            }}
-            @page {{
+            }
+            @page {
                 margin: 0.75in;
-            }}
-        }}
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>{title}</h1>
-    {f'<p class="subtitle">{subtitle}</p>' if subtitle else ''}
+    <h1>Number Crosswords</h1>
+    <p class="subtitle">Level 11</p>
 
     <div class="puzzle-container">
         <div class="grid" id="grid"></div>
@@ -262,7 +222,7 @@ def generate_html(
         <div class="buttons">
             <button class="check-btn" onclick="checkSolution()">Check</button>
             <button class="clear-btn" onclick="clearInputs()">Clear</button>
-            {"<button class='solution-btn' onclick='showSolution()'>Show Solution</button>" if show_solution_button else ""}
+            <button class='solution-btn' onclick='showSolution()'>Show Solution</button>
         </div>
 
         <div class="info">
@@ -271,8 +231,8 @@ def generate_html(
         </div>
 
         <div class="nav">
-            <a href="{prev_link}" class="{'disabled' if not prev_link else ''}">Previous</a>
-            <a href="{next_link}" class="{'disabled' if not next_link else ''}">Next</a>
+            <a href="level10.html" class="">Previous</a>
+            <a href="level12.html" class="">Next</a>
         </div>
 
         <div class="toc-link">
@@ -285,28 +245,28 @@ def generate_html(
     </div>
 
     <script>
-        const gridData = {grid_json};
+        const gridData = [[{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "4", "answer": "4"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "3", "answer": "3"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "+", "answer": "+"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "7"}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": null, "answer": "6"}, {"active": true, "clue": "\u00d7", "answer": "\u00d7"}, {"active": true, "clue": null, "answer": "1"}, {"active": true, "clue": "5", "answer": "5"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": null, "answer": "9"}, {"active": true, "clue": null, "answer": "0"}], [{"active": true, "clue": "1", "answer": "1"}, {"active": false}, {"active": false}, {"active": true, "clue": "=", "answer": "="}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": "+", "answer": "+"}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "1"}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": "8", "answer": "8"}, {"active": false}, {"active": false}, {"active": true, "clue": "1", "answer": "1"}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": null, "answer": "9"}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "8"}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": "=", "answer": "="}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}, {"active": false}], [{"active": true, "clue": null, "answer": "1"}, {"active": true, "clue": null, "answer": "4"}, {"active": true, "clue": "\u00d7", "answer": "\u00d7"}, {"active": true, "clue": "2", "answer": "2"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": "2", "answer": "2"}, {"active": true, "clue": "8", "answer": "8"}], [{"active": true, "clue": null, "answer": "5"}, {"active": true, "clue": "7", "answer": "7"}, {"active": true, "clue": "+", "answer": "+"}, {"active": true, "clue": "5", "answer": "5"}, {"active": true, "clue": "=", "answer": "="}, {"active": true, "clue": "6", "answer": "6"}, {"active": true, "clue": null, "answer": "2"}], [{"active": true, "clue": null, "answer": "0"}, {"active": false}, {"active": false}, {"active": true, "clue": "+", "answer": "+"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "7", "answer": "7"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": "=", "answer": "="}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "3"}, {"active": false}, {"active": false}, {"active": false}], [{"active": false}, {"active": false}, {"active": false}, {"active": true, "clue": null, "answer": "2"}, {"active": false}, {"active": false}, {"active": false}]];
         const validChars = ['0','1','2','3','4','5','6','7','8','9'];  // Only digits (operators always visible)
         let focusedInput = null;
 
-        function buildGrid() {{
+        function buildGrid() {
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
 
-            gridData.forEach((row, rowIdx) => {{
+            gridData.forEach((row, rowIdx) => {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'row';
 
-                row.forEach((cell, colIdx) => {{
+                row.forEach((cell, colIdx) => {
                     const cellDiv = document.createElement('div');
                     cellDiv.className = 'cell';
 
-                    if (!cell.active) {{
+                    if (!cell.active) {
                         cellDiv.className += ' inactive';
-                    }} else if (cell.clue) {{
+                    } else if (cell.clue) {
                         cellDiv.className += ' clue';
                         cellDiv.textContent = cell.clue;
-                    }} else {{
+                    } else {
                         cellDiv.className += ' input';
                         const input = document.createElement('input');
                         input.maxLength = 1;
@@ -316,37 +276,37 @@ def generate_html(
                         input.addEventListener('keydown', handleKeydown);
                         input.addEventListener('focus', () => focusedInput = input);
                         cellDiv.appendChild(input);
-                    }}
+                    }
 
                     rowDiv.appendChild(cellDiv);
-                }});
+                });
 
                 grid.appendChild(rowDiv);
-            }});
-        }}
+            });
+        }
 
-        function buildKeyboard() {{
+        function buildKeyboard() {
             const keyboard = document.getElementById('keyboard');
             keyboard.innerHTML = '';
 
-            validChars.forEach(char => {{
+            validChars.forEach(char => {
                 const key = document.createElement('button');
                 key.className = 'key';
                 key.textContent = char;
                 key.addEventListener('click', () => insertChar(char));
                 keyboard.appendChild(key);
-            }});
-        }}
+            });
+        }
 
-        function insertChar(char) {{
-            if (focusedInput) {{
+        function insertChar(char) {
+            if (focusedInput) {
                 focusedInput.value = char;
                 focusedInput.dispatchEvent(new Event('input'));
                 moveToNext(focusedInput);
-            }}
-        }}
+            }
+        }
 
-        function handleInput(e) {{
+        function handleInput(e) {
             const input = e.target;
             let value = input.value;
 
@@ -354,123 +314,123 @@ def generate_html(
             value = value.replace('*', '×').replace('/', '÷');
 
             // Filter invalid characters
-            if (value && !validChars.includes(value)) {{
+            if (value && !validChars.includes(value)) {
                 input.value = '';
                 return;
-            }}
+            }
 
             input.value = value;
             input.parentElement.classList.remove('correct', 'incorrect');
 
             // Toggle filled class based on whether input has value
-            if (value) {{
+            if (value) {
                 input.parentElement.classList.add('filled');
-            }} else {{
+            } else {
                 input.parentElement.classList.remove('filled');
-            }}
-        }}
+            }
+        }
 
-        function handleKeydown(e) {{
+        function handleKeydown(e) {
             const input = e.target;
 
-            if (e.key === 'ArrowRight' || e.key === 'Tab') {{
+            if (e.key === 'ArrowRight' || e.key === 'Tab') {
                 e.preventDefault();
                 moveToNext(input);
-            }} else if (e.key === 'ArrowLeft') {{
+            } else if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 moveToPrev(input);
-            }} else if (e.key === 'ArrowDown') {{
+            } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 moveVertical(input, 1);
-            }} else if (e.key === 'ArrowUp') {{
+            } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 moveVertical(input, -1);
-            }} else if (e.key === 'Backspace' && !input.value) {{
+            } else if (e.key === 'Backspace' && !input.value) {
                 e.preventDefault();
                 moveToPrev(input);
-            }}
-        }}
+            }
+        }
 
-        function getInputs() {{
+        function getInputs() {
             return Array.from(document.querySelectorAll('.cell.input input'));
-        }}
+        }
 
-        function moveToNext(current) {{
+        function moveToNext(current) {
             const inputs = getInputs();
             const idx = inputs.indexOf(current);
-            if (idx < inputs.length - 1) {{
+            if (idx < inputs.length - 1) {
                 inputs[idx + 1].focus();
-            }}
-        }}
+            }
+        }
 
-        function moveToPrev(current) {{
+        function moveToPrev(current) {
             const inputs = getInputs();
             const idx = inputs.indexOf(current);
-            if (idx > 0) {{
+            if (idx > 0) {
                 inputs[idx - 1].focus();
-            }}
-        }}
+            }
+        }
 
-        function moveVertical(current, direction) {{
+        function moveVertical(current, direction) {
             const row = parseInt(current.dataset.row);
             const col = parseInt(current.dataset.col);
             const newRow = row + direction;
 
             const target = document.querySelector(
-                `.cell.input input[data-row="${{newRow}}"][data-col="${{col}}"]`
+                `.cell.input input[data-row="${newRow}"][data-col="${col}"]`
             );
-            if (target) {{
+            if (target) {
                 target.focus();
-            }}
-        }}
+            }
+        }
 
-        function checkSolution() {{
+        function checkSolution() {
             const inputs = getInputs();
             let allCorrect = true;
 
-            inputs.forEach(input => {{
+            inputs.forEach(input => {
                 const row = parseInt(input.dataset.row);
                 const col = parseInt(input.dataset.col);
                 const expected = gridData[row][col].answer;
                 const actual = input.value;
 
                 const cell = input.parentElement;
-                if (actual === expected) {{
+                if (actual === expected) {
                     cell.classList.add('correct');
                     cell.classList.remove('incorrect');
-                }} else {{
+                } else {
                     cell.classList.add('incorrect');
                     cell.classList.remove('correct');
                     allCorrect = false;
-                }}
-            }});
+                }
+            });
 
-            if (allCorrect && inputs.every(i => i.value)) {{
+            if (allCorrect && inputs.every(i => i.value)) {
                 alert('Congratulations! You solved it!');
-            }}
-        }}
+            }
+        }
 
-        function clearInputs() {{
+        function clearInputs() {
             const inputs = getInputs();
-            inputs.forEach(input => {{
+            inputs.forEach(input => {
                 input.value = '';
                 input.parentElement.classList.remove('correct', 'incorrect');
-            }});
-            if (inputs.length > 0) {{
+            });
+            if (inputs.length > 0) {
                 inputs[0].focus();
-            }}
-        }}
+            }
+        }
 
-        function showSolution() {{
+        function showSolution() {
             const inputs = getInputs();
-            inputs.forEach(input => {{
+            inputs.forEach(input => {
                 const row = parseInt(input.dataset.row);
                 const col = parseInt(input.dataset.col);
                 input.value = gridData[row][col].answer;
                 input.parentElement.classList.add('correct');
                 input.parentElement.classList.remove('incorrect');
-            }});
-        }}
+            });
+        }
 
         // Initialize
         buildGrid();
@@ -481,21 +441,4 @@ def generate_html(
         if (firstInput) firstInput.focus();
     </script>
 </body>
-</html>"""
-
-    return html
-
-
-def save_puzzle_html(
-    result: PuzzleCreationResult,
-    path: str,
-    title: str = "Number Crossword",
-    subtitle: str = "",
-    show_solution_button: bool = True,
-    prev_link: str = "",
-    next_link: str = "",
-) -> None:
-    """Save a puzzle as an HTML file."""
-    html = generate_html(result, title, subtitle, show_solution_button, prev_link, next_link)
-    with open(path, "w") as f:
-        f.write(html)
+</html>
