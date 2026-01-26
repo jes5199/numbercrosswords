@@ -471,17 +471,16 @@ def generate_html(
             const wrapper = grid.parentElement;
             // Reset scale to measure natural width
             grid.style.transform = 'scale(1)';
+            wrapper.style.height = 'auto';
             const gridWidth = grid.offsetWidth;
             const availableWidth = wrapper.offsetWidth;
 
+            // Only scale down, never up
             if (gridWidth > availableWidth) {{
                 const scale = availableWidth / gridWidth;
                 grid.style.transform = `scale(${{scale}})`;
                 // Adjust wrapper height to match scaled grid
                 wrapper.style.height = (grid.offsetHeight * scale) + 'px';
-            }} else {{
-                grid.style.transform = 'scale(1)';
-                wrapper.style.height = 'auto';
             }}
         }}
 
