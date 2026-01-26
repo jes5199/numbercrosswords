@@ -160,9 +160,9 @@ def generate_html(
         }}
         .nav {{
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 10px;
             width: 100%;
-            max-width: 300px;
             margin-top: 10px;
         }}
         .nav a {{
