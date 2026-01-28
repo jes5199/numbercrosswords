@@ -785,6 +785,7 @@ def generate_ten_columns_html(
         const gridData = {grid_json};
         const validChars = ['0','1','2','3','4','5','6','7','8','9'];
         const showKeyboardHints = {'true' if show_keyboard_hints else 'false'};
+        const blanksPerDigit = 1;
         let focusedInput = null;
 
         function buildGrid() {{
@@ -844,19 +845,29 @@ def generate_ten_columns_html(
             if (!showKeyboardHints) return;
 
             const inputs = getInputs();
-            const usedDigits = new Set();
+            const digitCounts = {{}};
+            validChars.forEach(c => digitCounts[c] = 0);
 
             inputs.forEach(input => {{
                 if (input.value && validChars.includes(input.value)) {{
-                    usedDigits.add(input.value);
+                    digitCounts[input.value]++;
                 }}
             }});
 
             document.querySelectorAll('.key').forEach(key => {{
-                if (usedDigits.has(key.dataset.digit)) {{
-                    key.classList.add('used');
+                const digit = key.dataset.digit;
+                const count = digitCounts[digit];
+                key.classList.remove('used', 'used-once', 'used-full');
+                if (blanksPerDigit > 1) {{
+                    if (count >= blanksPerDigit) {{
+                        key.classList.add('used-full');
+                    }} else if (count > 0) {{
+                        key.classList.add('used-once');
+                    }}
                 }} else {{
-                    key.classList.remove('used');
+                    if (count > 0) {{
+                        key.classList.add('used');
+                    }}
                 }}
             }});
         }}
@@ -1220,6 +1231,14 @@ def generate_crossword_digits_html(
             background: #d4edda;
             border-color: #28a745;
         }}
+        .key.used-once {{
+            background: #fff3cd;
+            border-color: #ffc107;
+        }}
+        .key.used-full {{
+            background: #d4edda;
+            border-color: #28a745;
+        }}
 
         @media print {{
             .keyboard, .buttons, .info, .nav, .attribution {{
@@ -1288,6 +1307,7 @@ def generate_crossword_digits_html(
         const gridData = {grid_json};
         const validChars = ['0','1','2','3','4','5','6','7','8','9'];
         const showKeyboardHints = {'true' if show_keyboard_hints else 'false'};
+        const blanksPerDigit = {blanks_per_digit};
         let focusedInput = null;
 
         function buildGrid() {{
@@ -1347,19 +1367,29 @@ def generate_crossword_digits_html(
             if (!showKeyboardHints) return;
 
             const inputs = getInputs();
-            const usedDigits = new Set();
+            const digitCounts = {{}};
+            validChars.forEach(c => digitCounts[c] = 0);
 
             inputs.forEach(input => {{
                 if (input.value && validChars.includes(input.value)) {{
-                    usedDigits.add(input.value);
+                    digitCounts[input.value]++;
                 }}
             }});
 
             document.querySelectorAll('.key').forEach(key => {{
-                if (usedDigits.has(key.dataset.digit)) {{
-                    key.classList.add('used');
+                const digit = key.dataset.digit;
+                const count = digitCounts[digit];
+                key.classList.remove('used', 'used-once', 'used-full');
+                if (blanksPerDigit > 1) {{
+                    if (count >= blanksPerDigit) {{
+                        key.classList.add('used-full');
+                    }} else if (count > 0) {{
+                        key.classList.add('used-once');
+                    }}
                 }} else {{
-                    key.classList.remove('used');
+                    if (count > 0) {{
+                        key.classList.add('used');
+                    }}
                 }}
             }});
         }}

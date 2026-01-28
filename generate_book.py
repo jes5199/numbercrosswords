@@ -31,7 +31,7 @@ LEVELS = [
     (15, "crossword-digits", [], 1500, {"show_keyboard_hints": False}),
     (16, "crossword-digits", [], 1600, {"show_keyboard_hints": False}),
     (17, "crossword-digits", [], 1704, {"show_keyboard_hints": False, "num_equations": 18}),
-    (18, "crossword-digits", [], 1802, {"show_keyboard_hints": False, "num_equations": 20, "blanks_per_digit": 2}),
+    (18, "crossword-digits", [], 1802, {"show_keyboard_hints": True, "num_equations": 20, "blanks_per_digit": 2}),
 ]
 
 # Source files that affect puzzle generation
