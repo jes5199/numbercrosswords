@@ -1031,10 +1031,16 @@ def generate_crossword_digits_html(
     prev_link: str = "",
     next_link: str = "",
     show_keyboard_hints: bool = False,
+    blanks_per_digit: int = 1,
 ) -> str:
-    """Generate HTML for a crossword puzzle where each digit 0-9 is used exactly once."""
+    """Generate HTML for a crossword puzzle where each digit 0-9 is used exactly N times."""
     import json
     grid_json = json.dumps(grid_data)
+
+    if blanks_per_digit == 1:
+        digit_rule = "Each digit 0-9 is used exactly once."
+    else:
+        digit_rule = f"Each digit 0-9 is used exactly {blanks_per_digit} times."
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -1264,7 +1270,7 @@ def generate_crossword_digits_html(
 
         <div class="info">
             <p>Fill in the blanks so each row and column forms a valid equation.</p>
-            <p>Each digit 0-9 is used exactly once. Equations are evaluated left-to-right.</p>
+            <p>{digit_rule} Equations are evaluated left-to-right.</p>
         </div>
 
         <div class="nav">
@@ -1529,11 +1535,12 @@ def save_crossword_digits_html(
     prev_link: str = "",
     next_link: str = "",
     show_keyboard_hints: bool = False,
+    blanks_per_digit: int = 1,
 ) -> None:
     """Save a crossword-digits puzzle as an HTML file."""
     html = generate_crossword_digits_html(
         grid_data, title, subtitle, show_solution_button, prev_link, next_link,
-        show_keyboard_hints,
+        show_keyboard_hints, blanks_per_digit,
     )
     with open(path, "w") as f:
         f.write(html)

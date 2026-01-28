@@ -12,9 +12,10 @@ from puzzle import Puzzle
 def find_digit_blanks(
     shape: Shape,
     solved: Puzzle,
+    blanks_per_digit: int = 1,
 ) -> Optional[list[tuple[int, int]]]:
     """
-    Find 10 cells to blank such that each digit 0-9 appears exactly once.
+    Find cells to blank such that each digit 0-9 appears exactly blanks_per_digit times.
 
     Returns list of (row, col) positions, or None if not possible.
     """
@@ -28,16 +29,16 @@ def find_digit_blanks(
                 if val and val.isdigit():
                     by_digit[val].append((row, col))
 
-    # Check if we have at least one of each digit
+    # Check if we have enough of each digit
     for d in '0123456789':
-        if len(by_digit[d]) == 0:
+        if len(by_digit[d]) < blanks_per_digit:
             return None
 
-    # Select one cell for each digit (randomly for variety)
+    # Select blanks_per_digit cells for each digit (randomly for variety)
     blanks = []
     for d in '0123456789':
-        cell = random.choice(by_digit[d])
-        blanks.append(cell)
+        cells = random.sample(by_digit[d], blanks_per_digit)
+        blanks.extend(cells)
 
     return blanks
 
@@ -47,9 +48,10 @@ def generate_crossword_digits_puzzle(
     equation_length: int = 7,
     multi_op: bool = True,
     max_attempts: int = 100,
+    blanks_per_digit: int = 1,
 ) -> Optional[tuple[Shape, Puzzle, list[tuple[int, int]]]]:
     """
-    Generate a crossword puzzle where exactly 10 blanks use digits 0-9 once each.
+    Generate a crossword puzzle where blanks use digits 0-9 exactly blanks_per_digit times each.
 
     Returns (shape, solved_puzzle, blank_positions) or None if generation fails.
     """
@@ -65,7 +67,7 @@ def generate_crossword_digits_puzzle(
             continue
 
         shape, solved = grown_puzzle_to_shape_and_solution(grown)
-        blanks = find_digit_blanks(shape, solved)
+        blanks = find_digit_blanks(shape, solved, blanks_per_digit)
 
         if blanks is not None:
             return shape, solved, blanks

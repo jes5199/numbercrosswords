@@ -31,6 +31,7 @@ LEVELS = [
     (15, "crossword-digits", [], 1500, {"show_keyboard_hints": False}),
     (16, "crossword-digits", [], 1600, {"show_keyboard_hints": False}),
     (17, "crossword-digits", [], 1704, {"show_keyboard_hints": False, "num_equations": 18}),
+    (18, "crossword-digits", [], 1802, {"show_keyboard_hints": False, "num_equations": 20, "blanks_per_digit": 2}),
 ]
 
 # Source files that affect puzzle generation
@@ -150,6 +151,7 @@ def generate_crossword_digits(level: int, seed: int, prev_link: str, next_link: 
         equation_length=7,
         multi_op=True,
         max_attempts=100,
+        blanks_per_digit=options.get("blanks_per_digit", 1),
     )
 
     if result is None:
@@ -165,6 +167,7 @@ def generate_crossword_digits(level: int, seed: int, prev_link: str, next_link: 
         prev_link=prev_link,
         next_link=next_link,
         show_keyboard_hints=options.get("show_keyboard_hints", False),
+        blanks_per_digit=options.get("blanks_per_digit", 1),
     )
     return True
 
