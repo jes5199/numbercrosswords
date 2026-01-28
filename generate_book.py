@@ -10,7 +10,8 @@ import sys
 from pathlib import Path
 
 # Book configuration: (level, puzzle_type, args, seed, options)
-# puzzle_type: "standard" uses main.py, "ten-columns" uses ten_columns.py
+# puzzle_type: "standard" uses main.py, "ten-columns" uses ten_columns.py,
+#              "crossword-digits" uses crossword_digits.py
 # options is an optional dict with extra settings
 LEVELS = [
     (1, "standard", ["--large-digit", "1"], 5001, {}),
@@ -27,6 +28,7 @@ LEVELS = [
     (12, "standard", ["--grow", "14", "--length", "7", "--multi-op"], 1212, {}),
     (13, "ten-columns", [], 1313, {"show_keyboard_hints": True}),
     (14, "ten-columns", [], 1414, {"show_keyboard_hints": False}),
+    (15, "crossword-digits", [], 1500, {"show_keyboard_hints": False}),
 ]
 
 # Source files that affect puzzle generation
@@ -44,6 +46,11 @@ SOURCE_FILES = {
     "ten-columns": [
         "ten_columns.py",
         "html_output.py",
+    ],
+    "crossword-digits": [
+        "crossword_digits.py",
+        "html_output.py",
+        "grower.py",
     ],
 }
 
@@ -130,6 +137,36 @@ def generate_ten_columns(level: int, seed: int, prev_link: str, next_link: str, 
     return True
 
 
+def generate_crossword_digits(level: int, seed: int, prev_link: str, next_link: str, options: dict) -> bool:
+    """Generate a crossword puzzle where each digit 0-9 is used exactly once."""
+    from crossword_digits import generate_crossword_digits_puzzle, create_grid_data
+    from html_output import save_crossword_digits_html
+
+    random.seed(seed)
+    result = generate_crossword_digits_puzzle(
+        num_equations=14,
+        equation_length=7,
+        multi_op=True,
+        max_attempts=100,
+    )
+
+    if result is None:
+        return False
+
+    shape, solved, blanks = result
+    grid = create_grid_data(shape, solved, blanks)
+    save_crossword_digits_html(
+        grid,
+        f"output/book/level{level}.html",
+        title="Number Crosswords",
+        subtitle=f"Level {level}",
+        prev_link=prev_link,
+        next_link=next_link,
+        show_keyboard_hints=options.get("show_keyboard_hints", False),
+    )
+    return True
+
+
 def main():
     # Parse arguments
     force_rebuild = "--force" in sys.argv or "-f" in sys.argv
@@ -168,6 +205,13 @@ def main():
             success = generate_ten_columns(level, seed, prev_link, next_link, options)
             if not success:
                 print(f"  ERROR: Failed to generate ten columns puzzle")
+                sys.exit(1)
+            print(f"  Saved to {output_file}")
+
+        elif puzzle_type == "crossword-digits":
+            success = generate_crossword_digits(level, seed, prev_link, next_link, options)
+            if not success:
+                print(f"  ERROR: Failed to generate crossword-digits puzzle")
                 sys.exit(1)
             print(f"  Saved to {output_file}")
 
