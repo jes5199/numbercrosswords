@@ -29,6 +29,7 @@ LEVELS = [
     (13, "ten-columns", [], 1313, {"show_keyboard_hints": True}),
     (14, "ten-columns", [], 1414, {"show_keyboard_hints": False}),
     (15, "crossword-digits", [], 1500, {"show_keyboard_hints": False}),
+    (16, "crossword-digits", [], 1600, {"show_keyboard_hints": False}),
 ]
 
 # Source files that affect puzzle generation
