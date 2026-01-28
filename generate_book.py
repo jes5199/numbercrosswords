@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Generate the canonical puzzle book."""
+"""Generate the canonical puzzle book with caching."""
 
+import hashlib
+import json
+import os
 import random
 import subprocess
 import sys
+from pathlib import Path
 
 # Book configuration: (level, puzzle_type, args, seed, options)
 # puzzle_type: "standard" uses main.py, "ten-columns" uses ten_columns.py
@@ -24,6 +28,82 @@ LEVELS = [
     (13, "ten-columns", [], 1313, {"show_keyboard_hints": True}),
     (14, "ten-columns", [], 1414, {"show_keyboard_hints": False}),
 ]
+
+# Source files that affect puzzle generation
+SOURCE_FILES = {
+    "standard": [
+        "main.py",
+        "html_output.py",
+        "generator.py",
+        "grower.py",
+        "equation.py",
+        "shape.py",
+        "puzzle.py",
+        "creator.py",
+    ],
+    "ten-columns": [
+        "ten_columns.py",
+        "html_output.py",
+    ],
+}
+
+CACHE_FILE = Path(".book_cache.json")
+
+
+def hash_file(filepath: str) -> str:
+    """Get SHA256 hash of a file's contents."""
+    with open(filepath, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def get_source_hash(puzzle_type: str) -> str:
+    """Get combined hash of all source files for a puzzle type."""
+    hashes = []
+    for filename in SOURCE_FILES.get(puzzle_type, []):
+        if os.path.exists(filename):
+            hashes.append(hash_file(filename))
+    return hashlib.sha256("".join(hashes).encode()).hexdigest()[:16]
+
+
+def get_level_cache_key(
+    level: int,
+    puzzle_type: str,
+    args: list,
+    seed: int,
+    options: dict,
+    prev_link: str,
+    next_link: str,
+) -> str:
+    """Generate a cache key for a level configuration."""
+    config = {
+        "level": level,
+        "puzzle_type": puzzle_type,
+        "args": args,
+        "seed": seed,
+        "options": options,
+        "prev_link": prev_link,
+        "next_link": next_link,
+        "source_hash": get_source_hash(puzzle_type),
+    }
+    config_str = json.dumps(config, sort_keys=True)
+    return hashlib.sha256(config_str.encode()).hexdigest()[:16]
+
+
+def load_cache() -> dict:
+    """Load the cache manifest."""
+    if CACHE_FILE.exists():
+        try:
+            with open(CACHE_FILE) as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            return {}
+    return {}
+
+
+def save_cache(cache: dict) -> None:
+    """Save the cache manifest."""
+    with open(CACHE_FILE, "w") as f:
+        json.dump(cache, f, indent=2)
 
 
 def generate_ten_columns(level: int, seed: int, prev_link: str, next_link: str, options: dict) -> bool:
@@ -51,7 +131,13 @@ def generate_ten_columns(level: int, seed: int, prev_link: str, next_link: str, 
 
 
 def main():
+    # Parse arguments
+    force_rebuild = "--force" in sys.argv or "-f" in sys.argv
+
     total_levels = len(LEVELS)
+    cache = load_cache()
+    generated = 0
+    skipped = 0
 
     for level, puzzle_type, args, seed, options in LEVELS:
         # Determine prev/next links
@@ -66,6 +152,15 @@ def main():
             next_link = f"level{level + 1}.html"
 
         output_file = f"output/book/level{level}.html"
+        cache_key = get_level_cache_key(level, puzzle_type, args, seed, options, prev_link, next_link)
+
+        # Check cache
+        if not force_rebuild:
+            cached_key = cache.get(f"level{level}")
+            if cached_key == cache_key and os.path.exists(output_file):
+                print(f"Level {level}: cached (skipping)")
+                skipped += 1
+                continue
 
         print(f"Generating Level {level}...")
 
@@ -95,7 +190,14 @@ def main():
                 sys.exit(1)
             print(f"  Saved to {output_file}")
 
-    print("\nDone! All levels generated.")
+        # Update cache
+        cache[f"level{level}"] = cache_key
+        generated += 1
+
+    save_cache(cache)
+    print(f"\nDone! Generated {generated}, skipped {skipped} cached levels.")
+    if not force_rebuild and skipped > 0:
+        print("Use --force to regenerate all levels.")
 
 
 if __name__ == "__main__":
