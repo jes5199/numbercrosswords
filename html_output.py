@@ -525,8 +525,13 @@ def generate_ten_columns_html(
     show_solution_button: bool = True,
     prev_link: str = "",
     next_link: str = "",
+    show_keyboard_hints: bool = True,
 ) -> str:
-    """Generate HTML for a ten columns puzzle."""
+    """Generate HTML for a ten columns puzzle.
+
+    Args:
+        show_keyboard_hints: If True, highlights used digits on the keyboard.
+    """
     import json
     grid_json = json.dumps(grid_data)
 
@@ -779,6 +784,7 @@ def generate_ten_columns_html(
     <script>
         const gridData = {grid_json};
         const validChars = ['0','1','2','3','4','5','6','7','8','9'];
+        const showKeyboardHints = {'true' if show_keyboard_hints else 'false'};
         let focusedInput = null;
 
         function buildGrid() {{
@@ -835,6 +841,8 @@ def generate_ten_columns_html(
         }}
 
         function updateKeyboardHighlights() {{
+            if (!showKeyboardHints) return;
+
             const inputs = getInputs();
             const usedDigits = new Set();
 
@@ -1004,10 +1012,12 @@ def save_ten_columns_html(
     show_solution_button: bool = True,
     prev_link: str = "",
     next_link: str = "",
+    show_keyboard_hints: bool = True,
 ) -> None:
     """Save a ten columns puzzle as an HTML file."""
     html = generate_ten_columns_html(
-        grid_data, title, subtitle, show_solution_button, prev_link, next_link
+        grid_data, title, subtitle, show_solution_button, prev_link, next_link,
+        show_keyboard_hints,
     )
     with open(path, "w") as f:
         f.write(html)
