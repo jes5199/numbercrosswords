@@ -435,9 +435,12 @@ def generate_html(
                 if (actual === expected) {{
                     cell.classList.add('correct');
                     cell.classList.remove('incorrect');
-                }} else {{
+                }} else if (actual) {{
                     cell.classList.add('incorrect');
                     cell.classList.remove('correct');
+                    allCorrect = false;
+                }} else {{
+                    cell.classList.remove('correct', 'incorrect');
                     allCorrect = false;
                 }}
             }});
@@ -950,9 +953,12 @@ def generate_ten_columns_html(
                 if (actual === expected) {{
                     cell.classList.add('correct');
                     cell.classList.remove('incorrect');
-                }} else {{
+                }} else if (actual) {{
                     cell.classList.add('incorrect');
                     cell.classList.remove('correct');
+                    allCorrect = false;
+                }} else {{
+                    cell.classList.remove('correct', 'incorrect');
                     allCorrect = false;
                 }}
             }});
@@ -1491,9 +1497,12 @@ def generate_crossword_digits_html(
                 if (actual === expected) {{
                     cell.classList.add('correct');
                     cell.classList.remove('incorrect');
-                }} else {{
+                }} else if (actual) {{
                     cell.classList.add('incorrect');
                     cell.classList.remove('correct');
+                    allCorrect = false;
+                }} else {{
+                    cell.classList.remove('correct', 'incorrect');
                     allCorrect = false;
                 }}
             }});

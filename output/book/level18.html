@@ -240,7 +240,7 @@
         <div class="nav">
             <a href="level17.html" class="">Previous</a>
             <a href="index.html">Back to Puzzle Book</a>
-            <a href="coming-soon.html" class="">Next</a>
+            <a href="level19.html" class="">Next</a>
         </div>
 
         <div class="attribution">
@@ -436,9 +436,12 @@
                 if (actual === expected) {
                     cell.classList.add('correct');
                     cell.classList.remove('incorrect');
-                } else {
+                } else if (actual) {
                     cell.classList.add('incorrect');
                     cell.classList.remove('correct');
+                    allCorrect = false;
+                } else {
+                    cell.classList.remove('correct', 'incorrect');
                     allCorrect = false;
                 }
             });
