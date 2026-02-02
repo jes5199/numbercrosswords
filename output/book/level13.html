@@ -320,8 +320,16 @@
             document.querySelectorAll('.key').forEach(key => {
                 const digit = key.dataset.digit;
                 const count = digitCounts[digit];
-                key.classList.remove('used', 'used-once', 'used-full');
-                if (blanksPerDigit > 1) {
+                key.classList.remove('used', 'used-partial', 'used-once', 'used-full');
+                if (blanksPerDigit >= 3) {
+                    if (count >= blanksPerDigit) {
+                        key.classList.add('used-full');
+                    } else if (count >= 2) {
+                        key.classList.add('used-once');
+                    } else if (count >= 1) {
+                        key.classList.add('used-partial');
+                    }
+                } else if (blanksPerDigit > 1) {
                     if (count >= blanksPerDigit) {
                         key.classList.add('used-full');
                     } else if (count > 0) {

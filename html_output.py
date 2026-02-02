@@ -860,8 +860,16 @@ def generate_ten_columns_html(
             document.querySelectorAll('.key').forEach(key => {{
                 const digit = key.dataset.digit;
                 const count = digitCounts[digit];
-                key.classList.remove('used', 'used-once', 'used-full');
-                if (blanksPerDigit > 1) {{
+                key.classList.remove('used', 'used-partial', 'used-once', 'used-full');
+                if (blanksPerDigit >= 3) {{
+                    if (count >= blanksPerDigit) {{
+                        key.classList.add('used-full');
+                    }} else if (count >= 2) {{
+                        key.classList.add('used-once');
+                    }} else if (count >= 1) {{
+                        key.classList.add('used-partial');
+                    }}
+                }} else if (blanksPerDigit > 1) {{
                     if (count >= blanksPerDigit) {{
                         key.classList.add('used-full');
                     }} else if (count > 0) {{
@@ -1237,6 +1245,10 @@ def generate_crossword_digits_html(
             background: #d4edda;
             border-color: #28a745;
         }}
+        .key.used-partial {{
+            background: #f8d7da;
+            border-color: #dc3545;
+        }}
         .key.used-once {{
             background: #fff3cd;
             border-color: #ffc107;
@@ -1385,8 +1397,16 @@ def generate_crossword_digits_html(
             document.querySelectorAll('.key').forEach(key => {{
                 const digit = key.dataset.digit;
                 const count = digitCounts[digit];
-                key.classList.remove('used', 'used-once', 'used-full');
-                if (blanksPerDigit > 1) {{
+                key.classList.remove('used', 'used-partial', 'used-once', 'used-full');
+                if (blanksPerDigit >= 3) {{
+                    if (count >= blanksPerDigit) {{
+                        key.classList.add('used-full');
+                    }} else if (count >= 2) {{
+                        key.classList.add('used-once');
+                    }} else if (count >= 1) {{
+                        key.classList.add('used-partial');
+                    }}
+                }} else if (blanksPerDigit > 1) {{
                     if (count >= blanksPerDigit) {{
                         key.classList.add('used-full');
                     }} else if (count > 0) {{
